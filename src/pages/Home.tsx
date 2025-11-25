@@ -1,5 +1,5 @@
-import Welcome from "@/widgets/welcome/ui/welcome";
+import UsersList from "@/features/users/ui/UsersList";
 
-export function Home() {
-  return <Welcome />;
+export default function UsersPage() {
+  return <UsersList />;
 }

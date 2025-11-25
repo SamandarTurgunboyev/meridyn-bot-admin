@@ -1,4 +1,4 @@
-import { Home } from "@/pages/Home";
+import Login from "@/pages/Login";
 import { Outlet, type RouteObject } from "react-router-dom";
 
 const routesConfig: RouteObject = {
@@ -8,7 +8,7 @@ const routesConfig: RouteObject = {
       children: [
         {
           path: "/",
-          element: <Home />,
+          element: <Login />,
         },
       ],
     },
