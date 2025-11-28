@@ -50,3 +50,41 @@ export const FakeUserList: User[] = [
     isActive: true,
   },
 ];
+
+export interface UserListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: string | null;
+    previous: null | string;
+    results: UserListData[];
+  };
+}
+
+export interface UserListData {
+  id: number;
+  first_name: string;
+  last_name: string;
+  region: {
+    id: number;
+    name: string;
+  };
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface UserUpdateReq {
+  first_name: string;
+  last_name: string;
+  region: number;
+  is_active: boolean;
+}
+
+export interface UserCreateReq {
+  first_name: string;
+  last_name: string;
+  region_id: number;
+  is_active: boolean;
+}

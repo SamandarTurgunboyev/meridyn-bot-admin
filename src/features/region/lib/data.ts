@@ -17,3 +17,16 @@ export const fakeRegionList: RegionType[] = [
     name: "Andijon",
   },
 ];
+
+export interface RegionListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: RegionListResData[];
+}
+
+export interface RegionListResData {
+  id: number;
+  name: string;
+  created_at: string;
+}

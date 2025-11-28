@@ -1,17 +1,8 @@
-import { getPosts } from '@/shared/config/api/test/test.request';
-import LangToggle from '@/widgets/lang-toggle/ui/lang-toggle';
-import ModeToggle from '@/widgets/theme-toggle/ui/theme-toggle';
-import { useQuery } from '@tanstack/react-query';
-import GitHubButton from 'react-github-btn';
+import LangToggle from "@/widgets/lang-toggle/ui/lang-toggle";
+import ModeToggle from "@/widgets/theme-toggle/ui/theme-toggle";
+import GitHubButton from "react-github-btn";
 
 const Welcome = () => {
-  const { data } = useQuery({
-    queryKey: ['posts'],
-    queryFn: () => getPosts(),
-  });
-
-  console.log('data', data);
-
   return (
     <div className="custom-container h-screen rounded-2xl flex items-center justify-center">
       <div className="flex flex-col gap-2 items-center">

@@ -23,3 +23,26 @@ export const fakeDistrict: District[] = [
     user: FakeUserList[2],
   },
 ];
+
+export interface DistrictListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: DistrictListData[];
+  };
+}
+
+export interface DistrictListData {
+  id: number;
+  name: string;
+  user: {
+    id: number;
+    first_name: string;
+    last_name: string;
+  };
+  created_at: string;
+}

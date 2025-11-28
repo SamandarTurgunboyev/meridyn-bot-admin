@@ -1,6 +1,7 @@
-import axios from 'axios';
-import { BASE_URL } from './URLs';
-import i18n from '@/shared/config/i18n';
+import i18n from "@/shared/config/i18n";
+import { getToken } from "@/shared/lib/cookie";
+import axios from "axios";
+import { BASE_URL } from "./URLs";
 
 const httpClient = axios.create({
   baseURL: BASE_URL,
@@ -13,11 +14,11 @@ httpClient.interceptors.request.use(
 
     // Language configs
     const language = i18n.language;
-    config.headers['Accept-Language'] = language;
-    // const accessToken = localStorage.getItem('accessToken');
-    // if (accessToken) {
-    //   config.headers['Authorization'] = `Bearer ${accessToken}`;
-    // }
+    config.headers["Accept-Language"] = language;
+    const accessToken = getToken();
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
 
     return config;
   },
@@ -27,7 +28,7 @@ httpClient.interceptors.request.use(
 httpClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API error:', error);
+    console.error("API error:", error);
     return Promise.reject(error);
   },
 );

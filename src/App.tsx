@@ -7,7 +7,7 @@ const App = () => {
   return (
     <MainProvider>
       <AppRouter />
-      <Toaster />
+      <Toaster richColors={true} position="top-center" />
     </MainProvider>
   );
 };

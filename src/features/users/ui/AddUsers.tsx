@@ -1,4 +1,9 @@
-import type { User } from "@/features/users/lib/data";
+import { user_api } from "@/features/users/lib/api";
+import type {
+  UserCreateReq,
+  UserListData,
+  UserUpdateReq,
+} from "@/features/users/lib/data";
 import { AddedUser } from "@/features/users/lib/form";
 import { Button } from "@/shared/ui/button";
 import {
@@ -18,60 +23,83 @@ import {
   SelectValue,
 } from "@/shared/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import type z from "zod";
 
 interface UserFormProps {
-  initialData?: User | null;
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  initialData: UserListData | null;
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AddUsers = ({ initialData, setUsers, setDialogOpen }: UserFormProps) => {
-  const [load, setLoad] = useState(false);
+const AddUsers = ({ initialData, setDialogOpen }: UserFormProps) => {
   const form = useForm<z.infer<typeof AddedUser>>({
     resolver: zodResolver(AddedUser),
     defaultValues: {
-      firstName: initialData?.firstName || "",
-      lastName: initialData?.lastName || "",
-      region: initialData?.region || "",
-      isActive: initialData ? String(initialData.isActive) : "true",
+      firstName: initialData?.first_name || "",
+      lastName: initialData?.last_name || "",
+      region: initialData?.region.name || "",
+      isActive: initialData ? String(initialData.is_active) : "true",
+    },
+  });
+  const queryClient = useQueryClient();
+
+  const { mutate: update, isPending } = useMutation({
+    mutationFn: ({ body, id }: { id: number; body: UserUpdateReq }) =>
+      user_api.update({ body, id }),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["user_list"] });
+      toast.success(`Foydalanuvchi tahrirlandi`);
+      setDialogOpen(false);
+    },
+    onError: (err: AxiosError) => {
+      const errMessage = err.response?.data as { message: string };
+      const messageText = errMessage.message;
+      toast.error(messageText || "Xatolik yuz berdi", {
+        richColors: true,
+        position: "top-center",
+      });
+    },
+  });
+
+  const { mutate: create, isPending: createPending } = useMutation({
+    mutationFn: (body: UserCreateReq) => user_api.create(body),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["user_list"] });
+      toast.success(`Foydalanuvchi qo'shildi`);
+      setDialogOpen(false);
+    },
+    onError: (err: AxiosError) => {
+      const errMessage = err.response?.data as { message: string };
+      const messageText = errMessage.message;
+      toast.error(messageText || "Xatolik yuz berdi", {
+        richColors: true,
+        position: "top-center",
+      });
     },
   });
 
   function onSubmit(values: z.infer<typeof AddedUser>) {
-    setLoad(true);
     if (initialData) {
-      setTimeout(() => {
-        setUsers((prev) =>
-          prev.map((user) =>
-            user.id === initialData.id
-              ? {
-                  ...user,
-                  ...values,
-                  isActive: values.isActive === "true" ? true : false,
-                }
-              : user,
-          ),
-        );
-        setLoad(false);
-        setDialogOpen(false);
-      }, 2000);
-    } else {
-      setTimeout(() => {
-        setUsers((prev) => [
-          ...prev,
-          {
-            id: prev.length ? prev[prev.length - 1].id + 1 : 1,
-            ...values,
-            isActive: values.isActive === "true" ? true : false,
-          },
-        ]);
-        setLoad(false);
-        setDialogOpen(false);
-      }, 2000);
+      update({
+        body: {
+          first_name: values.firstName,
+          is_active: values.isActive === "true" ? true : false,
+          last_name: values.lastName,
+          region: Number(values.region),
+        },
+        id: initialData.id,
+      });
+    } else if (initialData === null) {
+      create({
+        first_name: values.firstName,
+        is_active: values.isActive === "true" ? true : false,
+        last_name: values.lastName,
+        region_id: Number(values.region),
+      });
     }
   }
 
@@ -126,9 +154,9 @@ const AddUsers = ({ initialData, setUsers, setDialogOpen }: UserFormProps) => {
                     <SelectValue placeholder="Hududni tanlang" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Toshkent">Toshkent</SelectItem>
-                    <SelectItem value="Samarqand">Samarqand</SelectItem>
-                    <SelectItem value="Bekobod">Bekobod</SelectItem>
+                    <SelectItem value="1">Toshkent</SelectItem>
+                    <SelectItem value="2">Samarqand</SelectItem>
+                    <SelectItem value="3">Bekobod</SelectItem>
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -166,7 +194,7 @@ const AddUsers = ({ initialData, setUsers, setDialogOpen }: UserFormProps) => {
           type="submit"
           className="w-full h-12 text-lg rounded-lg bg-blue-600 hover:bg-blue-600 cursor-pointer"
         >
-          {load ? (
+          {isPending || createPending ? (
             <Loader2 className="animate-spin" />
           ) : initialData ? (
             "Saqlash"

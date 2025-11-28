@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+import { removeToken } from "@/shared/lib/cookie";
 import { Button } from "@/shared/ui/button";
 import {
   Sidebar,
@@ -147,7 +148,10 @@ export function AppSidebar() {
         <Button
           variant={"ghost"}
           className="w-fit text-red-500 hover:text-red-500 cursor-pointer"
-          onClick={() => navigate("/")}
+          onClick={() => {
+            navigate("/");
+            removeToken();
+          }}
         >
           <LogOut />
           <p>Chiqish</p>

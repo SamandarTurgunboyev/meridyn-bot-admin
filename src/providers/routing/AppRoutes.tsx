@@ -1,3 +1,4 @@
+import LoginLayout from "@/LoginLayout";
 import Districts from "@/pages/Districts";
 import Doctors from "@/pages/Doctors";
 import UsersPage from "@/pages/Home";
@@ -23,7 +24,11 @@ const AppRouter = () => {
     },
     {
       path: "/dashboard",
-      element: <UsersPage />,
+      element: (
+        <LoginLayout>
+          <UsersPage />
+        </LoginLayout>
+      ),
     },
     {
       path: "/dashboard/plans",

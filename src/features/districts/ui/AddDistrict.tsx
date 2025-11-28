@@ -1,7 +1,17 @@
-import type { District } from "@/features/districts/lib/data";
+import { discrit_api } from "@/features/districts/lib/api";
+import type { DistrictListData } from "@/features/districts/lib/data";
 import { addDistrict } from "@/features/districts/lib/form";
-import { FakeUserList } from "@/features/users/lib/data";
+import { user_api } from "@/features/users/lib/api";
+import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/shared/ui/command";
 import {
   Form,
   FormControl,
@@ -11,33 +21,77 @@ import {
 } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 type FormValues = z.infer<typeof addDistrict>;
 
 interface Props {
-  initialValues: District | null;
-  setDistricts: Dispatch<SetStateAction<District[]>>;
+  initialValues: DistrictListData | null;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function AddDistrict({
-  initialValues,
-  setDistricts,
-  setDialogOpen,
-}: Props) {
-  const [load, setLoad] = useState<boolean>(false);
+export default function AddDistrict({ initialValues, setDialogOpen }: Props) {
+  const [openUser, setOpenUser] = useState<boolean>(false);
+  const [userSearch, setUserSearch] = useState<string>("");
+  const queryClient = useQueryClient();
+
+  const { data: user, isLoading: isUserLoading } = useQuery({
+    queryKey: ["user_list", userSearch],
+    queryFn: () => user_api.list({ search: userSearch }),
+    select(data) {
+      return data.data.data.results;
+    },
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (body: { name: string; user_id: number }) =>
+      discrit_api.create(body),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["discrit_list"] });
+      toast.success(`Tuman qo'shildi`);
+      setDialogOpen(false);
+    },
+    onError: (err: AxiosError) => {
+      const errMessage = err.response?.data as { message: string };
+      const messageText = errMessage.message;
+      toast.error(messageText || "Xatolik yuz berdi", {
+        richColors: true,
+        position: "top-center",
+      });
+    },
+  });
+
+  const { mutate: update, isPending: updatePending } = useMutation({
+    mutationFn: ({
+      body,
+      id,
+    }: {
+      id: number;
+      body: { name: string; user: number };
+    }) => discrit_api.update({ body, id }),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["discrit_list"] });
+      toast.success(`Tuman qo'shildi`);
+      setDialogOpen(false);
+    },
+    onError: (err: AxiosError) => {
+      const errMessage = err.response?.data as { message: string };
+      const messageText = errMessage.message;
+      toast.error(messageText || "Xatolik yuz berdi", {
+        richColors: true,
+        position: "top-center",
+      });
+    },
+  });
+
   const form = useForm<FormValues>({
     resolver: zodResolver(addDistrict),
     defaultValues: {
@@ -47,41 +101,16 @@ export default function AddDistrict({
   });
 
   function onSubmit(values: FormValues) {
-    const selectedUser = FakeUserList.find(
-      (u) => u.id === Number(values.userId),
-    );
-
-    if (!selectedUser) return;
-    setLoad(true);
     if (initialValues) {
-      setTimeout(() => {
-        setDistricts((prev) =>
-          prev.map((d) =>
-            d.id === initialValues.id
-              ? {
-                  ...d,
-                  name: values.name,
-                  user: selectedUser,
-                }
-              : d,
-          ),
-        );
-        setDialogOpen(false);
-        setLoad(false);
-      }, 2000);
+      update({
+        id: initialValues.id,
+        body: {
+          name: values.name,
+          user: Number(values.userId),
+        },
+      });
     } else {
-      setTimeout(() => {
-        setDistricts((prev) => [
-          ...prev,
-          {
-            id: prev.length ? prev[prev.length - 1].id + 1 : 1,
-            name: values.name,
-            user: selectedUser,
-          },
-        ]);
-        setDialogOpen(false);
-        setLoad(false);
-      }, 2000);
+      mutate({ name: values.name, user_id: Number(values.userId) });
     }
   }
 
@@ -109,36 +138,100 @@ export default function AddDistrict({
         <FormField
           name="userId"
           control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <Label className="text-md">Kim qo‘shgan</Label>
-              <FormControl>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full !h-12">
-                    <SelectValue placeholder="Foydalanuvchi tanlang" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {FakeUserList.map((u) => (
-                      <SelectItem key={u.id} value={String(u.id)}>
-                        {u.firstName} {u.lastName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            const selectedUser = user?.find(
+              (u) => String(u.id) === field.value,
+            );
+            return (
+              <FormItem className="flex flex-col">
+                <Label className="text-md">Foydalanuvchi</Label>
+
+                <Popover open={openUser} onOpenChange={setOpenUser}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openUser}
+                        className={cn(
+                          "w-full h-12 justify-between",
+                          !field.value && "text-muted-foreground",
+                        )}
+                      >
+                        {selectedUser
+                          ? `${selectedUser.first_name} ${selectedUser.last_name}`
+                          : "Foydalanuvchi tanlang"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+
+                  <PopoverContent
+                    className="w-[--radix-popover-trigger-width] p-0"
+                    align="start"
+                  >
+                    <Command shouldFilter={false}>
+                      <CommandInput
+                        placeholder="Qidirish..."
+                        className="h-9"
+                        value={userSearch}
+                        onValueChange={setUserSearch}
+                      />
+
+                      <CommandList>
+                        {isUserLoading ? (
+                          <div className="py-6 text-center text-sm">
+                            <Loader2 className="mx-auto h-4 w-4 animate-spin" />
+                          </div>
+                        ) : user && user.length > 0 ? (
+                          <CommandGroup>
+                            {user.map((u) => (
+                              <CommandItem
+                                key={u.id}
+                                value={`${u.id}`}
+                                onSelect={() => {
+                                  field.onChange(String(u.id));
+                                  setOpenUser(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    field.value === String(u.id)
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                {u.first_name} {u.last_name} {u.region.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        ) : (
+                          <CommandEmpty>Foydalanuvchi topilmadi</CommandEmpty>
+                        )}
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
 
-        {/* SUBMIT */}
-        <Button className="w-full h-12 bg-blue-700 hover:bg-blue-700 cursor-pointer">
-          {load ? (
-            <Loader2 className="animate-spin" />
+        <Button
+          type="submit"
+          className="w-full h-12 bg-blue-700 hover:bg-blue-800"
+          disabled={isPending || updatePending}
+        >
+          {isPending || updatePending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
           ) : initialValues ? (
             "Tahrirlash"
           ) : (
-            "Qo‘shish"
+            "Qo'shish"
           )}
         </Button>
       </form>
