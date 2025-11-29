@@ -44,7 +44,6 @@ const AuthLogin = () => {
       navigate("dashboard");
     },
     onError: (err: AxiosError) => {
-      console.log(err);
       const errMessage = err.response?.data as { message: string };
       const messageText = errMessage.message;
 

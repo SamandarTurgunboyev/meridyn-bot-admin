@@ -32,10 +32,9 @@ import type z from "zod";
 interface Props {
   initialValues: DoctorListType | null;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
-  setData: Dispatch<SetStateAction<DoctorListType[]>>;
 }
 
-const AddedDoctor = ({ initialValues, setData, setDialogOpen }: Props) => {
+const AddedDoctor = ({ initialValues, setDialogOpen }: Props) => {
   const [load, setLoad] = useState<boolean>(false);
   const form = useForm<z.infer<typeof DoctorForm>>({
     resolver: zodResolver(DoctorForm),
@@ -65,34 +64,8 @@ const AddedDoctor = ({ initialValues, setData, setDialogOpen }: Props) => {
 
   function onSubmit(values: z.infer<typeof DoctorForm>) {
     setLoad(true);
-    const newObject: DoctorListType = {
-      id: initialValues ? initialValues.id : Date.now(),
-      user: FakeUserList.find((u) => u.id === Number(values.user))!,
-      district: fakeDistrict.find((d) => d.id === Number(values.district))!,
-      desc: values.desc,
-      first_name: values.first_name,
-      last_name: values.last_name,
-      lat: values.lat,
-      long: values.long,
-      object: ObjectListData.find((d) => d.id === Number(values.object))!,
-      phone_number: values.phone_number,
-      spec: values.spec,
-      work: values.work,
-    };
-
-    setTimeout(() => {
-      setData((prev) => {
-        if (initialValues) {
-          return prev.map((item) =>
-            item.id === initialValues.id ? newObject : item,
-          );
-        } else {
-          return [...prev, newObject];
-        }
-      });
-      setLoad(false);
-      setDialogOpen(false);
-    }, 2000);
+    console.log(values);
+    setDialogOpen(false);
   }
 
   return (

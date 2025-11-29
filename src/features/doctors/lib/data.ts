@@ -50,3 +50,45 @@ export const doctorListData: DoctorListType[] = [
     long: ObjectListData[1].long,
   },
 ];
+
+export interface DoctorListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: string;
+    previous: string;
+    results: DoctorListResData[];
+  };
+}
+
+export interface DoctorListResData {
+  id: number;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  work_place: string;
+  sphere: string;
+  description: string;
+  district: {
+    id: number;
+    name: string;
+  };
+  place: {
+    id: number;
+    name: string;
+  };
+  user: {
+    id: number;
+    first_name: string;
+    last_name: string;
+  };
+  longitude: number;
+  latitude: number;
+  extra_location: {
+    latitude: number;
+    longitude: number;
+  };
+  created_at: string;
+}

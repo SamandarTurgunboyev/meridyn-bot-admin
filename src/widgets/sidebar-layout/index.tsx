@@ -93,7 +93,7 @@ const items = [
   },
   {
     title: "Farmasevtikalar",
-    url: "/dashboard/pharm",
+    url: "/dashboard/pharmaceuticals",
     icon: Microscope,
   },
 ];

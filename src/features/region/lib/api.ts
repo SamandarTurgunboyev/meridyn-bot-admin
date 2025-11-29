@@ -11,4 +11,19 @@ export const region_api = {
   }): Promise<AxiosResponse<RegionListRes>> {
     return await httpClient.get(`${REGIONS}list/`, { params });
   },
+
+  async create(body: { name: string }) {
+    const res = await httpClient.post(`${REGIONS}create/`, body);
+    return res;
+  },
+
+  async update({ body, id }: { id: number; body: { name: string } }) {
+    const res = await httpClient.patch(`${REGIONS}${id}/update/`, body);
+    return res;
+  },
+
+  async delete(id: number) {
+    const res = await httpClient.delete(`${REGIONS}${id}/delete/`);
+    return res;
+  },
 };

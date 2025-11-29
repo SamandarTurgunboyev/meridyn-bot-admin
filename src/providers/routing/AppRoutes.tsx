@@ -67,7 +67,7 @@ const AppRouter = () => {
       element: <Pill />,
     },
     {
-      path: "/dashboard/pharm",
+      path: "/dashboard/pharmaceuticals",
       element: <Pharm />,
     },
     {

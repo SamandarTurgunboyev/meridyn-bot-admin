@@ -6,5 +6,6 @@ const USER = "/api/v1/admin/user/";
 const REGION = "/api/v1/admin/district/";
 const REGIONS = "/api/v1/admin/region/";
 const DISTRICT = "/api/v1/admin/district/";
+const DOCTOR = "/api/v1/admin/doctor/";
 
-export { BASE_URL, DISTRICT, LOGIN, REGION, REGIONS, USER };
+export { BASE_URL, DISTRICT, DOCTOR, LOGIN, REGION, REGIONS, USER };

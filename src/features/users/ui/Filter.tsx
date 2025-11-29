@@ -101,7 +101,7 @@ const Filter = ({
             role="combobox"
             aria-expanded={openRegion}
             className={cn(
-              "w-64 h-12 justify-between",
+              "w-64 justify-between",
               !regionValue && "text-muted-foreground",
             )}
           >

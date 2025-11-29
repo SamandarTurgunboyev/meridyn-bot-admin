@@ -1,3 +1,4 @@
+import { region_api } from "@/features/region/lib/api";
 import { user_api } from "@/features/users/lib/api";
 import type {
   UserCreateReq,
@@ -23,7 +24,7 @@ import {
   SelectValue,
 } from "@/shared/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -103,6 +104,12 @@ const AddUsers = ({ initialData, setDialogOpen }: UserFormProps) => {
     }
   }
 
+  const { data: regions } = useQuery({
+    queryKey: ["region_list"],
+    queryFn: () => region_api.list({}),
+    select: (res) => res.data.data,
+  });
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -154,9 +161,12 @@ const AddUsers = ({ initialData, setDialogOpen }: UserFormProps) => {
                     <SelectValue placeholder="Hududni tanlang" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">Toshkent</SelectItem>
-                    <SelectItem value="2">Samarqand</SelectItem>
-                    <SelectItem value="3">Bekobod</SelectItem>
+                    {regions &&
+                      regions.map((item) => (
+                        <SelectItem value={`${item.id}`}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </FormControl>

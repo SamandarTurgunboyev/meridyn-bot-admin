@@ -1,5 +1,5 @@
-import { discrit_api } from "@/features/districts/lib/api";
-import type { DistrictListData } from "@/features/districts/lib/data";
+import { region_api } from "@/features/region/lib/api";
+import type { RegionListResData } from "@/features/region/lib/data";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
@@ -12,32 +12,32 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { Loader2, Trash, X } from "lucide-react";
-import { type Dispatch, type SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 
 interface Props {
   opneDelete: boolean;
   setOpenDelete: Dispatch<SetStateAction<boolean>>;
-  setDiscritDelete: Dispatch<SetStateAction<DistrictListData | null>>;
-  discrit: DistrictListData | null;
+  setRegionDelete: Dispatch<SetStateAction<RegionListResData | null>>;
+  regionDelete: RegionListResData | null;
 }
 
-const DeleteDiscrit = ({
+const DeleteRegion = ({
   opneDelete,
   setOpenDelete,
-  setDiscritDelete,
-  discrit,
+  setRegionDelete,
+  regionDelete,
 }: Props) => {
   const queryClient = useQueryClient();
 
-  const { mutate: deleteDiscrict, isPending } = useMutation({
-    mutationFn: (id: number) => discrit_api.delete(id),
+  const { mutate: deleteRegion, isPending } = useMutation({
+    mutationFn: (id: number) => region_api.delete(id),
 
     onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["discrit_list"] });
-      toast.success(`Tuman o'chirildi`);
+      queryClient.refetchQueries({ queryKey: ["region_list"] });
+      toast.success(`Foydalanuvchi o'chirildi`);
       setOpenDelete(false);
-      setDiscritDelete(null);
+      setRegionDelete(null);
     },
     onError: (err: AxiosError) => {
       const errMessage = err.response?.data as { message: string };
@@ -53,10 +53,9 @@ const DeleteDiscrit = ({
     <Dialog open={opneDelete} onOpenChange={setOpenDelete}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Tumanni o'chirish</DialogTitle>
+          <DialogTitle>Foydalanuvchini o'chrish</DialogTitle>
           <DialogDescription className="text-md font-semibold">
-            Siz rostan ham {discrit?.user.first_name} {discrit?.user.last_name}{" "}
-            ga tegishli {discrit?.name} tumanini o'chirmoqchimisiz
+            Siz rostan ham {regionDelete?.name} hududini o'chimoqchimiszi
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -69,7 +68,7 @@ const DeleteDiscrit = ({
           </Button>
           <Button
             variant={"destructive"}
-            onClick={() => discrit && deleteDiscrict(discrit.id)}
+            onClick={() => regionDelete && deleteRegion(regionDelete.id)}
           >
             {isPending ? (
               <Loader2 className="animate-spin" />
@@ -86,4 +85,4 @@ const DeleteDiscrit = ({
   );
 };
 
-export default DeleteDiscrit;
+export default DeleteRegion;
