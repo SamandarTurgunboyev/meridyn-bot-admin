@@ -1,4 +1,8 @@
-import type { DoctorListRes } from "@/features/doctors/lib/data";
+import type {
+  CreateDoctorReq,
+  DoctorListRes,
+  UpdateDoctorReq,
+} from "@/features/doctors/lib/data";
 import httpClient from "@/shared/config/api/httpClient";
 import { DOCTOR } from "@/shared/config/api/URLs";
 import type { AxiosResponse } from "axios";
@@ -15,6 +19,21 @@ export const doctor_api = {
     user?: string;
   }): Promise<AxiosResponse<DoctorListRes>> {
     const res = await httpClient.get(`${DOCTOR}list/`, { params });
+    return res;
+  },
+
+  async create(body: CreateDoctorReq) {
+    const res = await httpClient.post(`${DOCTOR}create/`, body);
+    return res;
+  },
+
+  async update({ body, id }: { id: number; body: UpdateDoctorReq }) {
+    const res = await httpClient.patch(`${DOCTOR}${id}/update/`, body);
+    return res;
+  },
+
+  async delete(id: number) {
+    const res = await httpClient.delete(`${DOCTOR}${id}/delete/`);
     return res;
   },
 };

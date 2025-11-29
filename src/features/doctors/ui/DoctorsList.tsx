@@ -1,19 +1,19 @@
 import { doctor_api } from "@/features/doctors/lib/api";
-import {
-  type DoctorListResData,
-  type DoctorListType,
-} from "@/features/doctors/lib/data";
+import { type DoctorListResData } from "@/features/doctors/lib/data";
+import DeleteDoctor from "@/features/doctors/ui/DeleteDoctor";
 import DoctorDetailDialog from "@/features/doctors/ui/DoctorDetailDialog";
 import FilterDoctor from "@/features/doctors/ui/FilterDoctor";
-import PaginationDoctor from "@/features/doctors/ui/PaginationDoctor";
 import TableDoctor from "@/features/doctors/ui/TableDoctor";
+import Pagination from "@/shared/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 const DoctorsList = () => {
   const [detail, setDetail] = useState<DoctorListResData | null>(null);
   const [detailDialog, setDetailDialog] = useState<boolean>(false);
-  const [editingPlan, setEditingPlan] = useState<DoctorListType | null>(null);
+  const [editingPlan, setEditingPlan] = useState<DoctorListResData | null>(
+    null,
+  );
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -23,6 +23,11 @@ const DoctorsList = () => {
   const [searchWork, setSearchWork] = useState("");
   const [searchSpec, setSearchSpec] = useState("");
   const [searchUser, setSearchUser] = useState("");
+
+  const [disricDelete, setDiscritDelete] = useState<DoctorListResData | null>(
+    null,
+  );
+  const [opneDelete, setOpenDelete] = useState<boolean>(false);
 
   const limit = 20;
 
@@ -58,8 +63,10 @@ const DoctorsList = () => {
     },
   });
 
-  // const handleDelete = (id: number) => {
-  // };
+  const handleDelete = (user: DoctorListResData) => {
+    setDiscritDelete(user);
+    setOpenDelete(true);
+  };
 
   const totalPages = doctor ? Math.ceil(doctor.count / limit) : 1;
 
@@ -79,7 +86,6 @@ const DoctorsList = () => {
             searchSpec={searchSpec}
             searchUser={searchUser}
             searchWork={searchWork}
-            // setData={setData}
             setDialogOpen={setDialogOpen}
             setEditingPlan={setEditingPlan}
             setSearchDistrict={setSearchDistrict}
@@ -103,14 +109,24 @@ const DoctorsList = () => {
         isLoading={isLoading}
         doctor={doctor ? doctor.results : []}
         setDetail={setDetail}
+        handleDelete={handleDelete}
         isFetching={isFetching}
         setDetailDialog={setDetailDialog}
+        setDialogOpen={setDialogOpen}
+        setEditingPlan={setEditingPlan}
       />
 
-      <PaginationDoctor
+      <Pagination
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         totalPages={totalPages}
+      />
+
+      <DeleteDoctor
+        discrit={disricDelete}
+        opneDelete={opneDelete}
+        setDiscritDelete={setDiscritDelete}
+        setOpenDelete={setOpenDelete}
       />
     </div>
   );

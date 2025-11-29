@@ -1,5 +1,5 @@
-import { user_api } from "@/features/users/lib/api";
-import type { UserListData } from "@/features/users/lib/data";
+import { doctor_api } from "@/features/doctors/lib/api";
+import type { DoctorListResData } from "@/features/doctors/lib/data";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
@@ -12,32 +12,32 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { Loader2, Trash, X } from "lucide-react";
-import type { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { toast } from "sonner";
 
 interface Props {
   opneDelete: boolean;
   setOpenDelete: Dispatch<SetStateAction<boolean>>;
-  setUserDelete: Dispatch<SetStateAction<UserListData | null>>;
-  userDelete: UserListData | null;
+  setDiscritDelete: Dispatch<SetStateAction<DoctorListResData | null>>;
+  discrit: DoctorListResData | null;
 }
 
-const DeleteUser = ({
+const DeleteDoctor = ({
   opneDelete,
   setOpenDelete,
-  userDelete,
-  setUserDelete,
+  setDiscritDelete,
+  discrit,
 }: Props) => {
   const queryClient = useQueryClient();
 
-  const { mutate: deleteUser, isPending } = useMutation({
-    mutationFn: ({ id }: { id: number }) => user_api.delete({ id }),
+  const { mutate: deleteDiscrict, isPending } = useMutation({
+    mutationFn: (id: number) => doctor_api.delete(id),
 
     onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["user_list"] });
-      toast.success(`Foydalanuvchi o'chirildi`);
+      queryClient.refetchQueries({ queryKey: ["doctor_list"] });
+      toast.success(`Shifokor o'chirildi`);
       setOpenDelete(false);
-      setUserDelete(null);
+      setDiscritDelete(null);
     },
     onError: (err: AxiosError) => {
       const errMessage = err.response?.data as { message: string };
@@ -53,10 +53,11 @@ const DeleteUser = ({
     <Dialog open={opneDelete} onOpenChange={setOpenDelete}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Foydalanuvchini o'chrish</DialogTitle>
+          <DialogTitle>Tumanni o'chirish</DialogTitle>
           <DialogDescription className="text-md font-semibold">
-            Siz rostan ham {userDelete?.first_name} {userDelete?.last_name}{" "}
-            nomli foydalanuvchini o'chimoqchimiszi
+            Siz rostan ham {discrit?.user.first_name} {discrit?.user.last_name}{" "}
+            ga tegishli {discrit?.first_name} {discrit?.last_name} shifokorni
+            o'chirmoqchimisiz
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -69,7 +70,7 @@ const DeleteUser = ({
           </Button>
           <Button
             variant={"destructive"}
-            onClick={() => userDelete && deleteUser({ id: userDelete.id })}
+            onClick={() => discrit && deleteDiscrict(discrit.id)}
           >
             {isPending ? (
               <Loader2 className="animate-spin" />
@@ -86,4 +87,4 @@ const DeleteUser = ({
   );
 };
 
-export default DeleteUser;
+export default DeleteDoctor;

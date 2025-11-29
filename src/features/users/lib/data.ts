@@ -72,6 +72,7 @@ export interface UserListData {
     name: string;
   };
   is_active: boolean;
+  telegram_id: string;
   created_at: string;
 }
 
@@ -87,4 +88,39 @@ export interface UserCreateReq {
   last_name: string;
   region_id: number;
   is_active: boolean;
+  telegram_id: string;
+}
+
+export interface BotUsers {
+  ok: boolean;
+  result: BotUsersData[];
+}
+
+export interface BotUsersData {
+  update_id: number;
+  message: {
+    message_id: number;
+    from: {
+      id: number;
+      is_bot: boolean;
+      first_name: string;
+      language_code: string;
+      username?: string;
+    };
+    chat: {
+      id: number;
+      first_name: string;
+      type: string;
+      username?: string;
+    };
+    date: number;
+    text: string;
+    entities: [
+      {
+        offset: number;
+        length: number;
+        type: string;
+      },
+    ];
+  };
 }

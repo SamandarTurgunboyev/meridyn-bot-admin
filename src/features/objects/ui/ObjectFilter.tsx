@@ -1,5 +1,5 @@
-import type { DoctorListResData } from "@/features/doctors/lib/data";
-import AddedDoctor from "@/features/doctors/ui/AddedDoctor";
+import type { ObjectListData } from "@/features/objects/lib/data";
+import AddedObject from "@/features/objects/ui/AddedObject";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
@@ -17,42 +17,30 @@ interface Props {
   setSearchName: Dispatch<SetStateAction<string>>;
   searchDistrict: string;
   setSearchDistrict: Dispatch<SetStateAction<string>>;
-  searchWork: string;
-  setSearchWork: Dispatch<SetStateAction<string>>;
-  searchSpec: string;
-  setSearchSpec: Dispatch<SetStateAction<string>>;
   searchUser: string;
   setSearchUser: Dispatch<SetStateAction<string>>;
   dialogOpen: boolean;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
-  searchObject: string;
-  setSearchObject: Dispatch<SetStateAction<string>>;
-  setEditingPlan: Dispatch<SetStateAction<DoctorListResData | null>>;
-  editingPlan: DoctorListResData | null;
+  setEditingPlan: Dispatch<SetStateAction<ObjectListData | null>>;
+  editingPlan: ObjectListData | null;
 }
 
-const FilterDoctor = ({
+const ObjectFilter = ({
   searchName,
   setSearchName,
   searchDistrict,
   setSearchDistrict,
-  searchObject,
-  setSearchObject,
-  searchWork,
-  setSearchWork,
-  searchSpec,
-  setSearchSpec,
   searchUser,
   setSearchUser,
   dialogOpen,
   setDialogOpen,
-  setEditingPlan,
   editingPlan,
+  setEditingPlan,
 }: Props) => {
   return (
-    <div className="flex justify-end gap-2 w-full">
+    <div className="flex gap-2 flex-wrap w-full md:w-auto">
       <Input
-        placeholder="Shifokor Ism Familiyasi"
+        placeholder="Obyekt nomi"
         value={searchName}
         onChange={(e) => setSearchName(e.target.value)}
         className="w-full md:w-48"
@@ -64,29 +52,12 @@ const FilterDoctor = ({
         className="w-full md:w-48"
       />
       <Input
-        placeholder="Obyekt"
-        value={searchObject}
-        onChange={(e) => setSearchObject(e.target.value)}
-        className="w-full md:w-48"
-      />
-      <Input
-        placeholder="Ish joyi"
-        value={searchWork}
-        onChange={(e) => setSearchWork(e.target.value)}
-        className="w-full md:w-48"
-      />
-      <Input
-        placeholder="Sohasi"
-        value={searchSpec}
-        onChange={(e) => setSearchSpec(e.target.value)}
-        className="w-full md:w-48"
-      />
-      <Input
-        placeholder="Kim qo'shgan"
+        placeholder="Foydalanuvchi"
         value={searchUser}
         onChange={(e) => setSearchUser(e.target.value)}
         className="w-full md:w-48"
       />
+
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
           <Button
@@ -97,13 +68,14 @@ const FilterDoctor = ({
             <Plus className="!h-5 !w-5" /> Qo'shish
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-x-hidden">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-xl">
-              {editingPlan ? "Shifokor tahrirlash" : "Yangi shifokor qo'shish"}
+              {editingPlan ? "Obyektni tahrirlash" : "Yangi obyekt qo'shish"}
             </DialogTitle>
           </DialogHeader>
-          <AddedDoctor
+
+          <AddedObject
             initialValues={editingPlan}
             setDialogOpen={setDialogOpen}
           />
@@ -113,4 +85,4 @@ const FilterDoctor = ({
   );
 };
 
-export default FilterDoctor;
+export default ObjectFilter;

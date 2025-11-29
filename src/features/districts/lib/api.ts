@@ -8,6 +8,7 @@ export const discrit_api = {
     limit?: number;
     offset?: number;
     name?: string;
+    user?: number;
   }): Promise<AxiosResponse<DistrictListRes>> {
     const res = await httpClient.get(`${DISTRICT}list/`, { params });
     return res;

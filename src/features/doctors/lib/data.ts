@@ -92,3 +92,32 @@ export interface DoctorListResData {
   };
   created_at: string;
 }
+
+export interface CreateDoctorReq {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  work_place: string;
+  sphere: string;
+  description: string;
+  district_id: number;
+  place_id: number;
+  user_id: number;
+  longitude: number;
+  latitude: number;
+  extra_location: {
+    longitude: number;
+    latitude: number;
+  };
+}
+export interface UpdateDoctorReq {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  work_place: string;
+  sphere: string;
+  description: string;
+  longitude: number;
+  latitude: number;
+  extra_location: { longitude: number; latitude: number };
+}

@@ -2,8 +2,8 @@ import { discrit_api } from "@/features/districts/lib/api";
 import { type DistrictListData } from "@/features/districts/lib/data";
 import DeleteDiscrit from "@/features/districts/ui/DeleteDiscrit";
 import Filter from "@/features/districts/ui/Filter";
-import PaginationDistrict from "@/features/districts/ui/PaginationDistrict";
 import TableDistrict from "@/features/districts/ui/TableDistrict";
+import Pagination from "@/shared/ui/pagination";
 import { useQuery } from "@tanstack/react-query";
 
 import { useState } from "react";
@@ -66,7 +66,7 @@ const DistrictsList = () => {
         currentPage={currentPage}
       />
 
-      <PaginationDistrict
+      <Pagination
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         totalPages={totalPages}

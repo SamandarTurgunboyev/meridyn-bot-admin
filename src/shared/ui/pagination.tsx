@@ -15,8 +15,8 @@ const Pagination = ({ currentPage, setCurrentPage, totalPages }: Props) => {
       <Button
         variant="outline"
         size="icon"
-        className="cursor-pointer"
         disabled={currentPage === 1}
+        className="cursor-pointer"
         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
       >
         <ChevronLeft />
@@ -40,9 +40,9 @@ const Pagination = ({ currentPage, setCurrentPage, totalPages }: Props) => {
       <Button
         variant="outline"
         size="icon"
-        className="cursor-pointer"
         disabled={currentPage === totalPages}
         onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+        className="cursor-pointer"
       >
         <ChevronRight />
       </Button>

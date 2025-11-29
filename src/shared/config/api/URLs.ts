@@ -7,5 +7,17 @@ const REGION = "/api/v1/admin/district/";
 const REGIONS = "/api/v1/admin/region/";
 const DISTRICT = "/api/v1/admin/district/";
 const DOCTOR = "/api/v1/admin/doctor/";
+const OBJECT = "/api/v1/admin/place/";
+const PHARMACIES = "/api/v1/admin/pharmacy/";
 
-export { BASE_URL, DISTRICT, DOCTOR, LOGIN, REGION, REGIONS, USER };
+export {
+  BASE_URL,
+  DISTRICT,
+  DOCTOR,
+  LOGIN,
+  OBJECT,
+  PHARMACIES,
+  REGION,
+  REGIONS,
+  USER,
+};

@@ -5,4 +5,5 @@ export const AddedUser = z.object({
   lastName: z.string().min(1, { message: "Majburiy maydon" }),
   region: z.string().min(1, { message: "Majburiy maydon" }),
   isActive: z.string().min(1, { message: "Majburiy maydon" }),
+  telegram_id: z.string().min(1, { message: "Foydalnuvchini tanlang" }),
 });

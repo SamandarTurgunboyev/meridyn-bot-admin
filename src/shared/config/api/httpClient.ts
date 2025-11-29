@@ -10,8 +10,6 @@ const httpClient = axios.create({
 
 httpClient.interceptors.request.use(
   async (config) => {
-    console.log(`API REQUEST to ${config.url}`, config);
-
     // Language configs
     const language = i18n.language;
     config.headers["Accept-Language"] = language;

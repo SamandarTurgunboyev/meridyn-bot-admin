@@ -1,5 +1,4 @@
-import type { DoctorListResData } from "@/features/doctors/lib/data";
-import formatPhone from "@/shared/lib/formatPhone";
+import type { ObjectListData } from "@/features/objects/lib/data";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import {
@@ -14,31 +13,29 @@ import { Eye, Loader2, Pencil, Trash2 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 
 interface Props {
-  setDetail: Dispatch<SetStateAction<DoctorListResData | null>>;
-  setEditingPlan: Dispatch<SetStateAction<DoctorListResData | null>>;
-  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  filteredData: ObjectListData[] | [];
+  setDetail: Dispatch<SetStateAction<ObjectListData | null>>;
   setDetailDialog: Dispatch<SetStateAction<boolean>>;
-  doctor: DoctorListResData[] | [];
+  setEditingPlan: Dispatch<SetStateAction<ObjectListData | null>>;
+  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  handleDelete: (object: ObjectListData) => void;
   isLoading: boolean;
   isError: boolean;
-  isFetching: boolean;
-  handleDelete: (user: DoctorListResData) => void;
 }
 
-const TableDoctor = ({
-  doctor,
+const ObjectTable = ({
+  filteredData,
   setDetail,
   setDetailDialog,
-  isError,
   setEditingPlan,
-  isLoading,
-  setDialogOpen,
   handleDelete,
-  isFetching,
+  setDialogOpen,
+  isError,
+  isLoading,
 }: Props) => {
   return (
     <div className="flex-1 overflow-auto">
-      {(isLoading || isFetching) && (
+      {isLoading && (
         <div className="h-full flex items-center justify-center bg-white/70 z-10">
           <span className="text-lg font-medium">
             <Loader2 className="animate-spin" />
@@ -53,39 +50,26 @@ const TableDoctor = ({
           </span>
         </div>
       )}
-
-      {!isLoading && !isError && (
+      {!isError && !isLoading && (
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>#</TableHead>
-              <TableHead>Shifokor Ism Familiyasi</TableHead>
-              <TableHead>Telefon raqami</TableHead>
+              <TableHead>Obyekt nomi</TableHead>
               <TableHead>Tuman</TableHead>
-              <TableHead>Obyekt</TableHead>
-              <TableHead>Ish joyi</TableHead>
-              <TableHead>Sohasi</TableHead>
-              <TableHead>Kim qo'shgan</TableHead>
+              <TableHead>Foydalanuvchi</TableHead>
               <TableHead className="text-right">Amallar</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {doctor.length > 0 ? (
-              doctor.map((item, index) => (
+            {filteredData && filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
                 <TableRow key={item.id}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell className="font-medium">
-                    {item.first_name} {item.last_name}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {formatPhone(item.phone_number)}
-                  </TableCell>
+                  <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell>
                     <Badge variant="outline">{item.district.name}</Badge>
                   </TableCell>
-                  <TableCell>{item.place.name}</TableCell>
-                  <TableCell>{item.work_place}</TableCell>
-                  <TableCell>{item.sphere}</TableCell>
                   <TableCell>
                     {item.user.first_name} {item.user.last_name}
                   </TableCell>
@@ -125,8 +109,8 @@ const TableDoctor = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-4 text-lg">
-                  Shifokor topilmadi.
+                <TableCell colSpan={5} className="text-center py-4 text-lg">
+                  Obyekt topilmadi.
                 </TableCell>
               </TableRow>
             )}
@@ -137,4 +121,4 @@ const TableDoctor = ({
   );
 };
 
-export default TableDoctor;
+export default ObjectTable;

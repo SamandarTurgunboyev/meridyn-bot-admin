@@ -31,3 +31,52 @@ export const ObjectListData: ObjectListType[] = [
     moreLong: ["41.2851", "69.2043"],
   },
 ];
+
+export interface ObjectListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: ObjectListData[];
+  };
+}
+
+export interface ObjectListData {
+  id: number;
+  name: string;
+  district: {
+    id: number;
+    name: string;
+  };
+  user: {
+    id: string;
+    first_name: string;
+    last_name: string;
+  };
+  longitude: number;
+  latitude: number;
+  extra_location: {
+    latitude: number;
+    longitude: number;
+  };
+  created_at: string;
+}
+
+export interface ObjectCreate {
+  district_id: number;
+  user_id: number;
+  name: string;
+  longitude: number;
+  latitude: number;
+  extra_location: { longitude: number; latitude: number };
+}
+
+export interface ObjectUpdate {
+  name: string;
+  longitude: number;
+  latitude: number;
+  extra_location: { longitude: number; latitude: number };
+}

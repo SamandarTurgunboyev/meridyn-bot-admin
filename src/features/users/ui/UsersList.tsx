@@ -4,8 +4,8 @@ import { user_api } from "@/features/users/lib/api";
 import type { UserListData } from "@/features/users/lib/data";
 import DeleteUser from "@/features/users/ui/DeleteUser";
 import Filter from "@/features/users/ui/Filter";
-import Pagination from "@/features/users/ui/Pagination";
 import UserTable from "@/features/users/ui/UserTable";
+import Pagination from "@/shared/ui/pagination";
 
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";

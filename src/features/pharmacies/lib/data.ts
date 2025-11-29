@@ -80,3 +80,66 @@ export const PharmciesData: PharmciesType[] = [
     lat: "41.3",
   },
 ];
+
+export interface PharmaciesListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: null | string;
+    previous: null | string;
+    results: PharmaciesListData[];
+  };
+}
+
+export interface PharmaciesListData {
+  id: number;
+  name: string;
+  inn: string;
+  owner_phone: string;
+  responsible_phone: string;
+  district: {
+    id: number;
+    name: string;
+  };
+  place: {
+    id: number;
+    name: string;
+  };
+  user: {
+    id: number;
+    first_name: string;
+    last_name: string;
+  };
+  longitude: number;
+  latitude: number;
+  extra_location: {
+    latitude: number;
+    longitude: number;
+  };
+  created_at: string;
+}
+
+export interface CreatePharmaciesReq {
+  name: string;
+  inn: string;
+  owner_phone: string;
+  responsible_phone: string;
+  district_id: number;
+  place_id: number;
+  user_id: number;
+  longitude: number;
+  latitude: number;
+  extra_location: { longitude: number; latitude: number };
+}
+
+export interface UpdatePharmaciesReq {
+  name: string;
+  inn: string;
+  owner_phone: string;
+  responsible_phone: string;
+  longitude: number;
+  latitude: number;
+  extra_location: { longitude: number; latitude: number };
+}

@@ -26,7 +26,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type z from "zod";
@@ -42,11 +43,13 @@ const AddUsers = ({ initialData, setDialogOpen }: UserFormProps) => {
     defaultValues: {
       firstName: initialData?.first_name || "",
       lastName: initialData?.last_name || "",
-      region: initialData?.region.name || "",
+      region: initialData ? String(initialData.region.id) : "",
       isActive: initialData ? String(initialData.is_active) : "true",
+      telegram_id: initialData ? initialData.telegram_id : "",
     },
   });
   const queryClient = useQueryClient();
+  const [bot, setBot] = useState<"select" | "input">("select");
 
   const { mutate: update, isPending } = useMutation({
     mutationFn: ({ body, id }: { id: number; body: UserUpdateReq }) =>
@@ -94,12 +97,13 @@ const AddUsers = ({ initialData, setDialogOpen }: UserFormProps) => {
         },
         id: initialData.id,
       });
-    } else if (initialData === null) {
+    } else if (initialData === null && values.telegram_id) {
       create({
         first_name: values.firstName,
         is_active: values.isActive === "true" ? true : false,
         last_name: values.lastName,
         region_id: Number(values.region),
+        telegram_id: values.telegram_id,
       });
     }
   }
@@ -110,9 +114,64 @@ const AddUsers = ({ initialData, setDialogOpen }: UserFormProps) => {
     select: (res) => res.data.data,
   });
 
+  const { data: user } = useQuery({
+    queryKey: ["bot_users"],
+    queryFn: () => user_api.bot_start(),
+    select: (res) => res.data.result,
+  });
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="telegram_id"
+          render={({ field }) => (
+            <FormItem>
+              <Label className="text-md mr-4">Botga start bosganlar</Label>
+              <FormControl>
+                <div className="flex gap-1">
+                  {bot === "select" ? (
+                    <Select
+                      value={String(field.value)}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="w-full !h-12">
+                        <SelectValue placeholder="Botga start bosganlar" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {user?.map((e) => (
+                          <SelectItem value={String(e.message.chat.id)}>
+                            {e.message.chat.username
+                              ? e.message.chat.username
+                              : e.message.chat.first_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      className="h-12"
+                      placeholder="Telgram idni yozing"
+                      {...field}
+                    />
+                  )}
+                  <Button
+                    type="button"
+                    className="h-12 !bg-blue-700 w-12 cursor-pointer"
+                    onClick={() =>
+                      bot === "select" ? setBot("input") : setBot("select")
+                    }
+                  >
+                    <Search />
+                  </Button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="firstName"

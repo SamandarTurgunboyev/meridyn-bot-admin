@@ -37,7 +37,9 @@ const DoctorDetailDialog = ({ detail, setDetail, object }: Props) => {
 
   const [polygonCoords, setPolygonCoords] = useState<[number, number][][]>([]);
 
-  const [circleCoords] = useState<[number, number] | null>(null);
+  const [circleCoords, setCircleCoords] = useState<[number, number] | null>(
+    null,
+  );
 
   const getCoords = async (name: string): Promise<CoordsData | null> => {
     try {
@@ -84,12 +86,11 @@ const DoctorDetailDialog = ({ detail, setDetail, object }: Props) => {
       }
 
       setCoords([object.latitude, object.longitude]);
-      // setCircleCoords([object.latitude, object.longitude]);
+      setCircleCoords([object.latitude, object.longitude]);
     };
 
     load();
   }, [object]);
-
   if (!object) return null;
 
   return (
@@ -154,10 +155,9 @@ const DoctorDetailDialog = ({ detail, setDetail, object }: Props) => {
                   />
                 )}
 
-                {/* Radius circle (ish joyi atrofida) */}
                 {circleCoords && (
                   <Circle
-                    geometry={[circleCoords, 500]}
+                    geometry={[circleCoords, 300]}
                     options={{
                       fillColor: "rgba(255, 100, 0, 0.3)",
                       strokeColor: "rgba(255, 100, 0, 0.8)",

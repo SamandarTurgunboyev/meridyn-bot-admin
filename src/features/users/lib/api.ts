@@ -1,11 +1,12 @@
 import type {
+  BotUsers,
   UserCreateReq,
   UserListRes,
   UserUpdateReq,
 } from "@/features/users/lib/data";
 import httpClient from "@/shared/config/api/httpClient";
 import { USER } from "@/shared/config/api/URLs";
-import type { AxiosResponse } from "axios";
+import axios, { type AxiosResponse } from "axios";
 
 export const user_api = {
   async list(params: {
@@ -36,6 +37,13 @@ export const user_api = {
 
   async delete({ id }: { id: number }) {
     const res = await httpClient.delete(`${USER}${id}/delete/`);
+    return res;
+  },
+
+  async bot_start(): Promise<AxiosResponse<BotUsers>> {
+    const res = await axios.get(
+      "https://api.telegram.org/bot8137312508:AAF37FpdHaWIUPQqkai9IqW3ob6Z500KnC0/getUpdates",
+    );
     return res;
   },
 };
