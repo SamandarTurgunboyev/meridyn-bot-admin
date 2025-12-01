@@ -172,7 +172,7 @@ export default function AddedObject({ initialValues, setDialogOpen }: Props) {
         }
       })();
     }
-  }, [initialValues]);
+  }, [initialValues, form]);
 
   const handleMapClick = (
     e: ymaps.IEvent<MouseEvent, { coords: [number, number] }>,
