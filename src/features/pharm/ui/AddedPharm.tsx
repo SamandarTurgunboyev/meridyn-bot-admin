@@ -1,4 +1,5 @@
-import type { PharmType } from "@/features/pharm/lib/data";
+import { factory_api } from "@/features/pharm/lib/api";
+import type { FactoryCreate, PharmType } from "@/features/pharm/lib/data";
 import { pharmForm } from "@/features/pharm/lib/form";
 import { Button } from "@/shared/ui/button";
 import {
@@ -11,19 +12,21 @@ import {
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import type z from "zod";
 
 interface Props {
   initialValues: PharmType | null;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
-  setPlans: Dispatch<SetStateAction<PharmType[]>>;
 }
 
-const AddedPharm = ({ initialValues, setDialogOpen, setPlans }: Props) => {
-  const [load, setLoad] = useState(false);
+const AddedPharm = ({ initialValues, setDialogOpen }: Props) => {
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof pharmForm>>({
     resolver: zodResolver(pharmForm),
     defaultValues: {
@@ -31,35 +34,51 @@ const AddedPharm = ({ initialValues, setDialogOpen, setPlans }: Props) => {
     },
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: (body: FactoryCreate) => factory_api.create(body),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["factory_list"] });
+      setDialogOpen(false);
+    },
+    onError: (err: AxiosError) => {
+      const errMessage = err.response?.data as { message: string };
+      const messageText = errMessage.message;
+      toast.error(messageText || "Xatolik yuz berdi", {
+        richColors: true,
+        position: "top-center",
+      });
+    },
+  });
+
+  const { mutate: update, isPending: updatePending } = useMutation({
+    mutationFn: ({ id, body }: { id: number; body: FactoryCreate }) =>
+      factory_api.update({ body, id }),
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["factory_list"] });
+      setDialogOpen(false);
+    },
+    onError: (err: AxiosError) => {
+      const errMessage = err.response?.data as { message: string };
+      const messageText = errMessage.message;
+      toast.error(messageText || "Xatolik yuz berdi", {
+        richColors: true,
+        position: "top-center",
+      });
+    },
+  });
+
   function onSubmit(data: z.infer<typeof pharmForm>) {
-    setLoad(true);
-    if (initialValues) {
-      setTimeout(() => {
-        setPlans((prev) =>
-          prev.map((plan) =>
-            plan.id === initialValues.id
-              ? {
-                  ...plan,
-                  ...data,
-                }
-              : plan,
-          ),
-        );
-        setLoad(false);
-        setDialogOpen(false);
-      }, 2000);
+    if (!initialValues) {
+      mutate({
+        name: data.name,
+      });
     } else {
-      setTimeout(() => {
-        setPlans((prev) => [
-          ...prev,
-          {
-            id: prev.length ? prev[prev.length - 1].id + 1 : 1,
-            name: data.name,
-          },
-        ]);
-        setLoad(false);
-        setDialogOpen(false);
-      }, 2000);
+      update({
+        body: {
+          name: data.name,
+        },
+        id: initialValues.id,
+      });
     }
   }
 
@@ -87,9 +106,9 @@ const AddedPharm = ({ initialValues, setDialogOpen, setPlans }: Props) => {
 
           <Button
             className="w-full h-12 text-lg rounded-lg bg-blue-600 hover:bg-blue-600 cursor-pointer"
-            disabled={load}
+            disabled={isPending || updatePending}
           >
-            {load ? (
+            {isPending || updatePending ? (
               <Loader2 className="animate-spin" />
             ) : initialValues ? (
               "Tahrirlash"

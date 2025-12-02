@@ -1,6 +1,6 @@
 import type { DistrictListRes } from "@/features/districts/lib/data";
 import httpClient from "@/shared/config/api/httpClient";
-import { DISTRICT } from "@/shared/config/api/URLs";
+import { API_URLS } from "@/shared/config/api/URLs";
 import type { AxiosResponse } from "axios";
 
 export const discrit_api = {
@@ -10,7 +10,7 @@ export const discrit_api = {
     name?: string;
     user?: number;
   }): Promise<AxiosResponse<DistrictListRes>> {
-    const res = await httpClient.get(`${DISTRICT}list/`, { params });
+    const res = await httpClient.get(`${API_URLS.DISTRICT}list/`, { params });
     return res;
   },
 
@@ -18,7 +18,7 @@ export const discrit_api = {
     name: string;
     user_id: number;
   }): Promise<AxiosResponse<DistrictListRes>> {
-    const res = await httpClient.post(`${DISTRICT}create/`, body);
+    const res = await httpClient.post(`${API_URLS.DISTRICT}create/`, body);
     return res;
   },
 
@@ -32,12 +32,15 @@ export const discrit_api = {
       user: number;
     };
   }): Promise<AxiosResponse<DistrictListRes>> {
-    const res = await httpClient.patch(`${DISTRICT}${id}/update/`, body);
+    const res = await httpClient.patch(
+      `${API_URLS.DISTRICT}${id}/update/`,
+      body,
+    );
     return res;
   },
 
   async delete(id: number): Promise<AxiosResponse<DistrictListRes>> {
-    const res = await httpClient.delete(`${DISTRICT}${id}/delete/`);
+    const res = await httpClient.delete(`${API_URLS.DISTRICT}${id}/delete/`);
     return res;
   },
 };

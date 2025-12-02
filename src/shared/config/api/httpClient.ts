@@ -1,10 +1,10 @@
 import i18n from "@/shared/config/i18n";
 import { getToken } from "@/shared/lib/cookie";
 import axios from "axios";
-import { BASE_URL } from "./URLs";
+import { API_URLS } from "./URLs";
 
 const httpClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_URLS.BASE_URL,
   timeout: 10000,
 });
 

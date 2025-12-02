@@ -19,7 +19,7 @@ interface Props {
   handleDelete: (id: LocationListDataRes) => void;
 }
 
-const LocationTable = ({
+const UserLocationTable = ({
   filtered,
   setDetail,
   setDetailDialog,
@@ -89,4 +89,4 @@ const LocationTable = ({
   );
 };
 
-export default LocationTable;
+export default UserLocationTable;

@@ -1,6 +1,6 @@
 import type { RegionListRes } from "@/features/region/lib/data";
 import httpClient from "@/shared/config/api/httpClient";
-import { REGIONS } from "@/shared/config/api/URLs";
+import { API_URLS } from "@/shared/config/api/URLs";
 import type { AxiosResponse } from "axios";
 
 export const region_api = {
@@ -9,21 +9,24 @@ export const region_api = {
     offset?: number;
     name?: string;
   }): Promise<AxiosResponse<RegionListRes>> {
-    return await httpClient.get(`${REGIONS}list/`, { params });
+    return await httpClient.get(`${API_URLS.REGIONS}list/`, { params });
   },
 
   async create(body: { name: string }) {
-    const res = await httpClient.post(`${REGIONS}create/`, body);
+    const res = await httpClient.post(`${API_URLS.REGIONS}create/`, body);
     return res;
   },
 
   async update({ body, id }: { id: number; body: { name: string } }) {
-    const res = await httpClient.patch(`${REGIONS}${id}/update/`, body);
+    const res = await httpClient.patch(
+      `${API_URLS.REGIONS}${id}/update/`,
+      body,
+    );
     return res;
   },
 
   async delete(id: number) {
-    const res = await httpClient.delete(`${REGIONS}${id}/delete/`);
+    const res = await httpClient.delete(`${API_URLS.REGIONS}${id}/delete/`);
     return res;
   },
 };

@@ -1,4 +1,4 @@
-import type { Plan } from "@/features/plans/lib/data";
+import type { PlanListData } from "@/features/plans/lib/data";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import { type Dispatch, type SetStateAction } from "react";
 interface Props {
   setDetail: Dispatch<SetStateAction<boolean>>;
   detail: boolean;
-  plan: Plan | null;
+  plan: PlanListData | null;
 }
 
 const PlanDetail = ({ detail, setDetail, plan }: Props) => {
@@ -33,7 +33,7 @@ const PlanDetail = ({ detail, setDetail, plan }: Props) => {
           {/* Reja nomi */}
           <div>
             <p className="font-semibold text-gray-900">Reja nomi:</p>
-            <p>{plan.name}</p>
+            <p>{plan.title}</p>
           </div>
 
           {/* Reja tavsifi */}
@@ -46,7 +46,7 @@ const PlanDetail = ({ detail, setDetail, plan }: Props) => {
           <div>
             <p className="font-semibold text-gray-900">Kimga tegishli:</p>
             <p>
-              {plan.user.firstName} {plan.user.lastName}
+              {plan.user.first_name} {plan.user.last_name}
             </p>
           </div>
 
@@ -56,13 +56,13 @@ const PlanDetail = ({ detail, setDetail, plan }: Props) => {
 
             <Badge
               className={clsx(
-                plan.status === "Bajarildi"
+                plan.is_done
                   ? "bg-green-100 text-green-700"
                   : "bg-yellow-100 text-yellow-700",
                 "text-sm px-4 py-2 mt-2",
               )}
             >
-              {plan.status}
+              {plan.is_done ? "Bajarilgan" : "Bajarilmagan"}
             </Badge>
           </div>
         </DialogDescription>

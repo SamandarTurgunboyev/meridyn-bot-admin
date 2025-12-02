@@ -1,62 +1,60 @@
-import type { Plan } from "@/features/plans/lib/data";
+import { plans_api } from "@/features/plans/lib/api";
+import type { PlanListData } from "@/features/plans/lib/data";
+import DeletePlan from "@/features/plans/ui/DeletePlan";
 import FilterPlans from "@/features/plans/ui/FilterPlans";
 import PalanTable from "@/features/plans/ui/PalanTable";
 import PlanDetail from "@/features/plans/ui/PlanDetail";
-import { FakeUserList } from "@/features/users/lib/data";
+import formatDate from "@/shared/lib/formatDate";
 import Pagination from "@/shared/ui/pagination";
-import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 const PlansList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
-  const [plans, setPlans] = useState<Plan[]>([
-    {
-      id: 1,
-      name: "Tumanga borish",
-      description: "Tumanga borish rejasi",
-      user: FakeUserList[0],
-      status: "Bajarildi",
-      createdAt: new Date("2025-02-03"),
-    },
-    {
-      id: 2,
-      name: "Yangi reja",
-      description: "Yangi reja tavsifi",
-      user: FakeUserList[1],
-      status: "Bajarilmagan",
-      createdAt: new Date("2025-01-12"),
-    },
-  ]);
-
-  const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [detail, setDetail] = useState<boolean>(false);
-
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState<boolean>(false);
   const [searchUser, setSearchUser] = useState<string>("");
+  const limit = 20;
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ["plan_list", dateFilter, searchUser, statusFilter, currentPage],
+    queryFn: () => {
+      const params: {
+        limit?: number;
+        offset?: number;
+        status?: boolean;
+        date?: string;
+        user?: string;
+      } = {
+        date: dateFilter && formatDate.format(dateFilter, "YYYY-MM-DD"),
+        user: searchUser,
+        limit,
+        offset: (currentPage - 1) * limit,
+      };
 
-  const handleDelete = (id: number) => {
-    setPlans(plans.filter((p) => p.id !== id));
+      if (statusFilter !== "all") {
+        params.status = statusFilter === "true" ? true : false;
+      }
+
+      return plans_api.list(params);
+    },
+    select(data) {
+      return data.data.data;
+    },
+  });
+
+  const totalPages = data ? Math.ceil(data.count / limit) : 1;
+  const [editingPlan, setEditingPlan] = useState<PlanListData | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [detail, setDetail] = useState<boolean>(false);
+
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [planDelete, setPlanDelete] = useState<PlanListData | null>(null);
+
+  const handleDelete = (id: PlanListData) => {
+    setOpenDelete(true);
+    setPlanDelete(id);
   };
-
-  const filteredPlans = useMemo(() => {
-    return plans.filter((item) => {
-      const statusMatch =
-        statusFilter === "all" || item.status === statusFilter;
-
-      const dateMatch = dateFilter
-        ? item.createdAt.toDateString() === dateFilter.toDateString()
-        : true;
-
-      const userMatch = `${item.user.firstName} ${item.user.lastName}`
-        .toLowerCase()
-        .includes(searchUser.toLowerCase());
-
-      return statusMatch && dateMatch && userMatch;
-    });
-  }, [plans, statusFilter, dateFilter, searchUser]);
 
   return (
     <div className="flex flex-col h-full p-10 w-full">
@@ -72,7 +70,6 @@ const PlansList = () => {
           setDialogOpen={setDialogOpen}
           setEditingPlan={setEditingPlan}
           setOpen={setOpen}
-          setPlans={setPlans}
           setSearchUser={setSearchUser}
           setStatusFilter={setStatusFilter}
           statusFilter={statusFilter}
@@ -82,17 +79,27 @@ const PlansList = () => {
       </div>
 
       <PalanTable
-        filteredPlans={filteredPlans}
+        filteredPlans={data ? data.results : []}
         handleDelete={handleDelete}
         setDetail={setDetail}
         setDialogOpen={setDialogOpen}
         setEditingPlan={setEditingPlan}
+        isError={isError}
+        isFetching={isFetching}
+        isLoading={isLoading}
       />
 
       <Pagination
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         totalPages={totalPages}
+      />
+
+      <DeletePlan
+        opneDelete={openDelete}
+        planDelete={planDelete}
+        setOpenDelete={setOpenDelete}
+        setPlanDelete={setPlanDelete}
       />
     </div>
   );

@@ -1,4 +1,5 @@
-import type { PillType } from "@/features/pill/lib/data";
+import { pill_api } from "@/features/pill/lib/api";
+import type { PillCreateReq, PillType } from "@/features/pill/lib/data";
 import { createPillFormData } from "@/features/pill/lib/form";
 import formatPrice from "@/shared/lib/formatPrice";
 import { Button } from "@/shared/ui/button";
@@ -12,25 +13,65 @@ import {
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import type z from "zod";
 
 interface Props {
   initialValues: PillType | null;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
-  setPlans: Dispatch<SetStateAction<PillType[]>>;
 }
 
-const AddedPill = ({ initialValues, setDialogOpen, setPlans }: Props) => {
-  const [load, setLoad] = useState(false);
+const AddedPill = ({ initialValues, setDialogOpen }: Props) => {
   const [displayPrice, setDisplayPrice] = useState<string>("");
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof createPillFormData>>({
     resolver: zodResolver(createPillFormData),
     defaultValues: {
       name: initialValues?.name || "",
       price: initialValues?.price || "",
+    },
+  });
+
+  const { mutate: added, isPending: addedPending } = useMutation({
+    mutationFn: (body: PillCreateReq) => {
+      return pill_api.added(body);
+    },
+    onSuccess: () => {
+      toast.success("Dori qo'shildi");
+      setDialogOpen(false);
+      queryClient.resetQueries({ queryKey: ["pill_list"] });
+    },
+    onError: (err: AxiosError) => {
+      const errMessage = err.response?.data as { message: string };
+      const messageText = errMessage.message;
+      toast.error(messageText || "Xatolik yuz berdi", {
+        richColors: true,
+        position: "top-center",
+      });
+    },
+  });
+
+  const { mutate: edit, isPending: editPending } = useMutation({
+    mutationFn: ({ body, id }: { id: number; body: PillCreateReq }) => {
+      return pill_api.update({ body, id });
+    },
+    onSuccess: () => {
+      toast.success("Dori yangilandi");
+      queryClient.resetQueries({ queryKey: ["pill_list"] });
+      setDialogOpen(false);
+    },
+    onError: (err: AxiosError) => {
+      const errMessage = err.response?.data as { message: string };
+      const messageText = errMessage.message;
+      toast.error(messageText || "Xatolik yuz berdi", {
+        richColors: true,
+        position: "top-center",
+      });
     },
   });
 
@@ -41,35 +82,19 @@ const AddedPill = ({ initialValues, setDialogOpen, setPlans }: Props) => {
   }, [initialValues]);
 
   function onSubmit(data: z.infer<typeof createPillFormData>) {
-    setLoad(true);
     if (initialValues) {
-      setTimeout(() => {
-        setPlans((prev) =>
-          prev.map((plan) =>
-            plan.id === initialValues.id
-              ? {
-                  ...plan,
-                  ...data,
-                }
-              : plan,
-          ),
-        );
-        setLoad(false);
-        setDialogOpen(false);
-      }, 2000);
+      edit({
+        id: initialValues.id,
+        body: {
+          name: data.name,
+          price: data.price,
+        },
+      });
     } else {
-      setTimeout(() => {
-        setPlans((prev) => [
-          ...prev,
-          {
-            id: prev.length ? prev[prev.length - 1].id + 1 : 1,
-            name: data.name,
-            price: data.price,
-          },
-        ]);
-        setLoad(false);
-        setDialogOpen(false);
-      }, 2000);
+      added({
+        name: data.name,
+        price: data.price,
+      });
     }
   }
 
@@ -125,9 +150,9 @@ const AddedPill = ({ initialValues, setDialogOpen, setPlans }: Props) => {
 
           <Button
             className="w-full h-12 text-lg rounded-lg bg-blue-600 hover:bg-blue-600 cursor-pointer"
-            disabled={load}
+            disabled={addedPending || editPending}
           >
-            {load ? (
+            {addedPending || editPending ? (
               <Loader2 className="animate-spin" />
             ) : initialValues ? (
               "Tahrirlash"

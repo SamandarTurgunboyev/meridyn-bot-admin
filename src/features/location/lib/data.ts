@@ -75,3 +75,51 @@ export const LocationFakeData: LocationListType[] = [
     createdAt: new Date("2025-02-01T10:15:00"),
   },
 ];
+
+export interface LocationListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: null | string;
+    previous: null | string;
+    results: LocationListDataRes[];
+  };
+}
+
+export interface LocationListDataRes {
+  id: number;
+  longitude: number;
+  latitude: number;
+  created_at: string;
+  district: {
+    id: number;
+    name: string;
+  };
+  place: {
+    id: number;
+    name: string;
+    longitude: number;
+    latitude: number;
+  };
+  doctor: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    longitude: number;
+    latitude: number;
+  };
+  pharmacy: {
+    id: number;
+    name: string;
+    longitude: number;
+    latitude: number;
+  };
+  user: {
+    id: number;
+    first_name: string;
+    last_name: string;
+  };
+  updated_at: string;
+}

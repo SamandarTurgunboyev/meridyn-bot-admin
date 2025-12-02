@@ -1,7 +1,6 @@
-import type { ReportsTypeList } from "@/features/reports/lib/data";
+import type { ResportListResData } from "@/features/reports/lib/data";
 import formatDate from "@/shared/lib/formatDate";
 import formatPrice from "@/shared/lib/formatPrice";
-import { Button } from "@/shared/ui/button";
 import {
   Table,
   TableBody,
@@ -10,43 +9,62 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import { Edit, Trash } from "lucide-react";
-import type { Dispatch, SetStateAction } from "react";
+import { Loader2 } from "lucide-react";
 
 const ReportsTable = ({
   plans,
-  setEditingPlan,
-  setDialogOpen,
-  handleDelete,
+  // setEditingPlan,
+  // setDialogOpen,
+  // handleDelete,
+  isError,
+  isLoading,
 }: {
-  plans: ReportsTypeList[];
-  setEditingPlan: Dispatch<SetStateAction<ReportsTypeList | null>>;
-  setDialogOpen: Dispatch<SetStateAction<boolean>>;
-  handleDelete: (id: number) => void;
+  plans: ResportListResData[];
+  isLoading: boolean;
+  isError: boolean;
+  // setEditingPlan: Dispatch<SetStateAction<ResportListResData | null>>;
+  // setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  // handleDelete: (id: number) => void;
 }) => {
   return (
     <div className="flex-1 overflow-auto">
-      <Table>
-        <TableHeader>
-          <TableRow className="text-center">
-            <TableHead className="text-start">ID</TableHead>
-            <TableHead className="text-start">Dorixoan nomi</TableHead>
-            <TableHead className="text-start">To'langan summa</TableHead>
-            <TableHead className="text-start">To'langan sanasi</TableHead>
-            <TableHead className="text-right">Harakatlar</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {plans.map((plan) => (
-            <TableRow key={plan.id} className="text-start">
-              <TableCell>{plan.id}</TableCell>
-              <TableCell>{plan.pharm_name}</TableCell>
-              <TableCell>{formatPrice(plan.amount, true)}</TableCell>
-              <TableCell>
-                {formatDate.format(plan.month, "DD-MM-YYYY")}
-              </TableCell>
+      {isLoading && (
+        <div className="h-full flex items-center justify-center bg-white/70 z-10">
+          <span className="text-lg font-medium">
+            <Loader2 className="animate-spin" />
+          </span>
+        </div>
+      )}
 
-              <TableCell className="flex gap-2 justify-end">
+      {isError && (
+        <div className="h-full flex items-center justify-center z-10">
+          <span className="text-lg font-medium text-red-600">
+            Ma'lumotlarni olishda xatolik yuz berdi.
+          </span>
+        </div>
+      )}
+      {!isError && !isLoading && (
+        <Table>
+          <TableHeader>
+            <TableRow className="text-center">
+              <TableHead className="text-start">ID</TableHead>
+              <TableHead className="text-start">Dorixoan nomi</TableHead>
+              <TableHead className="text-start">To'langan summa</TableHead>
+              <TableHead className="text-start">To'langan sanasi</TableHead>
+              {/* <TableHead className="text-right">Harakatlar</TableHead> */}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {plans.map((plan) => (
+              <TableRow key={plan.id} className="text-start">
+                <TableCell>{plan.id}</TableCell>
+                <TableCell>{plan.employee_name}</TableCell>
+                <TableCell>{formatPrice(plan.price, true)}</TableCell>
+                <TableCell>
+                  {formatDate.format(plan.created_at, "DD-MM-YYYY")}
+                </TableCell>
+
+                {/* <TableCell className="flex gap-2 justify-end">
                 <Button
                   variant="outline"
                   size="sm"
@@ -66,11 +84,12 @@ const ReportsTable = ({
                 >
                   <Trash className="h-4 w-4" />
                 </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+              </TableCell> */}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 };

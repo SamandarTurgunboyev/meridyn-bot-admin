@@ -16,3 +16,27 @@ export const FakePills: PillType[] = [
   { id: 9, name: "Amoxicillin 500mg", price: "28000" },
   { id: 10, name: "Immuno Plus", price: "30000" },
 ];
+
+export interface PillListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: null | string;
+    previous: null | string;
+    results: PillListData[];
+  };
+}
+
+export interface PillListData {
+  id: number;
+  name: string;
+  price: string;
+  created_at: string;
+}
+
+export interface PillCreateReq {
+  name: string;
+  price: string;
+}

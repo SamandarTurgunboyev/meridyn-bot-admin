@@ -79,3 +79,71 @@ export const FakeSpecifications: SpecificationsType[] = [
     paidPrice: 22400,
   },
 ];
+
+export interface OrderListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: null | string;
+    previous: null | string;
+    results: OrderListDataRes[];
+  };
+}
+
+export interface OrderListDataRes {
+  id: number;
+  factory: {
+    id: number;
+    name: string;
+  };
+  total_price: string;
+  paid_price: string;
+  advance: number;
+  employee_name: string;
+  overdue_price: string;
+  order_items: [
+    {
+      id: number;
+      product: number;
+      quantity: number;
+      total_price: string;
+    },
+  ];
+  file: string;
+  user: {
+    id: number;
+    first_name: string;
+    last_name: string;
+  };
+}
+
+export interface OrderCreateReq {
+  factory_id: number;
+  paid_price: string;
+  total_price: string;
+  advance: number;
+  employee_name: string;
+  user_id: number;
+  items: {
+    product: number;
+    quantity: number;
+    total_price: string;
+  }[];
+}
+
+export interface OrderUpdateReq {
+  total_price: string;
+  user_id: number;
+  factory_id: number;
+  paid_price: string;
+  advance: number;
+  employee_name: string;
+  overdue_price?: string;
+  items: {
+    product_id: number;
+    quantity: number;
+    total_price: string;
+  }[];
+}

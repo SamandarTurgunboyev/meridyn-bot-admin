@@ -58,3 +58,46 @@ export const fakeTourPlan: TourPlanType[] = [
     status: "planned",
   },
 ];
+
+export interface PlanTourListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: null | string;
+    previous: null | string;
+    results: PlanTourListDataRes[];
+  };
+}
+
+export interface PlanTourListDataRes {
+  id: number;
+  place_name: string;
+  user: {
+    id: number;
+    first_name: string;
+    last_name: string;
+  };
+  latitude: null | string;
+  longitude: null | string;
+  location_send: boolean;
+  date: null | string;
+  created_at: string;
+}
+
+export interface PlanTourCreate {
+  place_name: string;
+  // latitude: number;
+  // longitude: number;
+  user_id: number;
+  date: string;
+}
+
+export interface PlanTourUpdate {
+  place_name: string;
+  user: number;
+  // latitude: number;
+  // longitude: number;
+  date: string;
+}

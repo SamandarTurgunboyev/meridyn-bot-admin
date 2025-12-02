@@ -67,3 +67,26 @@ export const ReportsData: ReportsTypeList[] = [
     month: new Date(2025, 4, 1),
   },
 ];
+
+export interface ResportListRes {
+  status_code: number;
+  status: string;
+  message: string;
+  data: {
+    count: number;
+    next: null | string;
+    previous: null | string;
+    results: ResportListResData[];
+  };
+}
+
+export interface ResportListResData {
+  id: number;
+  employee_name: string;
+  factory: {
+    id: number;
+    name: string;
+  };
+  price: string;
+  created_at: string;
+}

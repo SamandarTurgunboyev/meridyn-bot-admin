@@ -4,7 +4,7 @@ import type {
   ObjectUpdate,
 } from "@/features/objects/lib/data";
 import httpClient from "@/shared/config/api/httpClient";
-import { OBJECT } from "@/shared/config/api/URLs";
+import { API_URLS } from "@/shared/config/api/URLs";
 import type { AxiosResponse } from "axios";
 
 export const object_api = {
@@ -15,22 +15,22 @@ export const object_api = {
     district?: string;
     user?: string;
   }): Promise<AxiosResponse<ObjectListRes>> {
-    const res = await httpClient.get(`${OBJECT}list/`, { params });
+    const res = await httpClient.get(`${API_URLS.OBJECT}list/`, { params });
     return res;
   },
 
   async create(body: ObjectCreate) {
-    const res = await httpClient.post(`${OBJECT}create/`, body);
+    const res = await httpClient.post(`${API_URLS.OBJECT}create/`, body);
     return res;
   },
 
   async update({ body, id }: { id: number; body: ObjectUpdate }) {
-    const res = await httpClient.patch(`${OBJECT}${id}/update/`, body);
+    const res = await httpClient.patch(`${API_URLS.OBJECT}${id}/update/`, body);
     return res;
   },
 
   async delete(id: number) {
-    const res = await httpClient.delete(`${OBJECT}${id}/delete/`);
+    const res = await httpClient.delete(`${API_URLS.OBJECT}${id}/delete/`);
     return res;
   },
 };

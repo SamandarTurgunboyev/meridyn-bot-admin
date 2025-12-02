@@ -1,4 +1,4 @@
-import type { Plan } from "@/features/plans/lib/data";
+import type { PlanListData } from "@/features/plans/lib/data";
 import AddedPlan from "@/features/plans/ui/AddedPlan";
 import { Button } from "@/shared/ui/button";
 import { Calendar } from "@/shared/ui/calendar";
@@ -32,9 +32,8 @@ interface Props {
   setSearchUser: Dispatch<SetStateAction<string>>;
   dialogOpen: boolean;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
-  editingPlan: Plan | null;
-  setEditingPlan: Dispatch<SetStateAction<Plan | null>>;
-  setPlans: Dispatch<SetStateAction<Plan[]>>;
+  editingPlan: PlanListData | null;
+  setEditingPlan: Dispatch<SetStateAction<PlanListData | null>>;
 }
 
 const FilterPlans = ({
@@ -50,7 +49,6 @@ const FilterPlans = ({
   setDialogOpen,
   setEditingPlan,
   editingPlan,
-  setPlans,
 }: Props) => {
   return (
     <div className="flex gap-2 mb-4">
@@ -60,8 +58,8 @@ const FilterPlans = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Barchasi</SelectItem>
-          <SelectItem value="Bajarildi">Bajarildi</SelectItem>
-          <SelectItem value="Bajarilmagan">Bajarilmagan</SelectItem>
+          <SelectItem value="true">Bajarildi</SelectItem>
+          <SelectItem value="false">Bajarilmagan</SelectItem>
         </SelectContent>
       </Select>
 
@@ -128,7 +126,6 @@ const FilterPlans = ({
           <AddedPlan
             initialValues={editingPlan}
             setDialogOpen={setDialogOpen}
-            setPlans={setPlans}
           />
         </DialogContent>
       </Dialog>

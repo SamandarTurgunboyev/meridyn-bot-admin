@@ -62,11 +62,6 @@ const items = [
     icon: Hospital,
   },
   {
-    title: "Hisobotlar",
-    url: "/dashboard/reports",
-    icon: ClipboardList,
-  },
-  {
     title: "Jo'natilgan joylar",
     url: "/dashboard/sent-locations",
     icon: MapPin,
@@ -75,6 +70,11 @@ const items = [
     title: "Spesifikatsiyalar",
     url: "/dashboard/specifications",
     icon: FileText,
+  },
+  {
+    title: "Hisobotlar",
+    url: "/dashboard/reports",
+    icon: ClipboardList,
   },
   {
     title: "Tur planlar",

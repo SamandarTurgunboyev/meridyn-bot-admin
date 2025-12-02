@@ -4,7 +4,7 @@ import type {
   UpdateDoctorReq,
 } from "@/features/doctors/lib/data";
 import httpClient from "@/shared/config/api/httpClient";
-import { DOCTOR } from "@/shared/config/api/URLs";
+import { API_URLS } from "@/shared/config/api/URLs";
 import type { AxiosResponse } from "axios";
 
 export const doctor_api = {
@@ -18,22 +18,22 @@ export const doctor_api = {
     sphere?: string;
     user?: string;
   }): Promise<AxiosResponse<DoctorListRes>> {
-    const res = await httpClient.get(`${DOCTOR}list/`, { params });
+    const res = await httpClient.get(`${API_URLS.DOCTOR}list/`, { params });
     return res;
   },
 
   async create(body: CreateDoctorReq) {
-    const res = await httpClient.post(`${DOCTOR}create/`, body);
+    const res = await httpClient.post(`${API_URLS.DOCTOR}create/`, body);
     return res;
   },
 
   async update({ body, id }: { id: number; body: UpdateDoctorReq }) {
-    const res = await httpClient.patch(`${DOCTOR}${id}/update/`, body);
+    const res = await httpClient.patch(`${API_URLS.DOCTOR}${id}/update/`, body);
     return res;
   },
 
   async delete(id: number) {
-    const res = await httpClient.delete(`${DOCTOR}${id}/delete/`);
+    const res = await httpClient.delete(`${API_URLS.DOCTOR}${id}/delete/`);
     return res;
   },
 };

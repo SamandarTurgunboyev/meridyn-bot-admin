@@ -1,5 +1,10 @@
-import { pharmData, type PharmType } from "@/features/pharm/lib/data";
+import { factory_api } from "@/features/pharm/lib/api";
+import {
+  type FactoryListDataRes,
+  type PharmType,
+} from "@/features/pharm/lib/data";
 import AddedPharm from "@/features/pharm/ui/AddedPharm";
+import DeletePharm from "@/features/pharm/ui/DeletePharm";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
@@ -9,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
+import Pagination from "@/shared/ui/pagination";
 import {
   Table,
   TableBody,
@@ -17,33 +23,38 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import clsx from "clsx";
-import { ChevronLeft, ChevronRight, Edit, Plus, Trash } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Edit, Loader2, Plus, Trash } from "lucide-react";
+import { useState } from "react";
 
 const PharmList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
-  const [plans, setPlans] = useState<PharmType[]>(pharmData);
+  const [nameFilter, setNameFilter] = useState<string>("");
+  const limit = 20;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["factory_list", currentPage, nameFilter],
+    queryFn: () =>
+      factory_api.list({
+        limit,
+        offset: (currentPage - 1) * limit,
+        name: nameFilter,
+      }),
+    select(data) {
+      return data.data.data;
+    },
+  });
+  const totalPages = data ? Math.ceil(data?.count / limit) : 1;
 
   const [editingPlan, setEditingPlan] = useState<PharmType | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [nameFilter, setNameFilter] = useState<string>("");
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [pillDelete, setPillDelete] = useState<FactoryListDataRes | null>(null);
 
-  const handleDelete = (id: number) => {
-    setPlans(plans.filter((p) => p.id !== id));
+  const handleDelete = (id: FactoryListDataRes) => {
+    setOpenDelete(true);
+    setPillDelete(id);
   };
-
-  const filteredPlans = useMemo(() => {
-    return plans.filter((item) => {
-      const statusMatch = item.name
-        .toLowerCase()
-        .includes(nameFilter.toLowerCase());
-
-      return statusMatch;
-    });
-  }, [plans, nameFilter]);
 
   return (
     <div className="flex flex-col h-full p-10 w-full">
@@ -80,7 +91,6 @@ const PharmList = () => {
               <AddedPharm
                 initialValues={editingPlan}
                 setDialogOpen={setDialogOpen}
-                setPlans={setPlans}
               />
             </DialogContent>
           </Dialog>
@@ -88,84 +98,83 @@ const PharmList = () => {
       </div>
 
       <div className="flex-1 overflow-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="text-center">
-              <TableHead className="text-start">ID</TableHead>
-              <TableHead className="text-start">Nomi</TableHead>
-              <TableHead className="text-end">Amallar</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredPlans.map((plan) => (
-              <TableRow key={plan.id} className="text-start">
-                <TableCell>{plan.id}</TableCell>
-                <TableCell>{plan.name}</TableCell>
-                <TableCell className="flex gap-2 justify-end">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-blue-500 text-white hover:bg-blue-500 hover:text-white cursor-pointer"
-                    onClick={() => {
-                      setEditingPlan(plan);
-                      setDialogOpen(true);
-                    }}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="cursor-pointer"
-                    onClick={() => handleDelete(plan.id)}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </TableCell>
+        {isLoading && (
+          <div className="h-full flex items-center justify-center bg-white/70 z-10">
+            <span className="text-lg font-medium">
+              <Loader2 className="animate-spin" />
+            </span>
+          </div>
+        )}
+
+        {isError && (
+          <div className="h-full flex items-center justify-center z-10">
+            <span className="text-lg font-medium text-red-600">
+              Ma'lumotlarni olishda xatolik yuz berdi.
+            </span>
+          </div>
+        )}
+        {!isLoading && !isError && (
+          <Table>
+            <TableHeader>
+              <TableRow className="text-center">
+                <TableHead className="text-start">ID</TableHead>
+                <TableHead className="text-start">Nomi</TableHead>
+                <TableHead className="text-end">Amallar</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {data && data.results.length > 0 ? (
+                data?.results.map((plan) => (
+                  <TableRow key={plan.id} className="text-start">
+                    <TableCell>{plan.id}</TableCell>
+                    <TableCell>{plan.name}</TableCell>
+                    <TableCell className="flex gap-2 justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-blue-500 text-white hover:bg-blue-500 hover:text-white cursor-pointer"
+                        onClick={() => {
+                          setEditingPlan(plan);
+                          setDialogOpen(true);
+                        }}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="cursor-pointer"
+                        onClick={() => handleDelete(plan)}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-4 text-lg">
+                    Farmasevtika topilmadi.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
 
-      <div className="mt-2 sticky bottom-0 bg-white flex justify-end gap-2 z-10 py-2 border-t">
-        <Button
-          variant="outline"
-          size="icon"
-          disabled={currentPage === 1}
-          className="cursor-pointer"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        >
-          <ChevronLeft />
-        </Button>
-        {Array.from({ length: totalPages }, (_, i) => (
-          <Button
-            key={i}
-            variant={currentPage === i + 1 ? "default" : "outline"}
-            size="icon"
-            className={clsx(
-              currentPage === i + 1
-                ? "bg-blue-500 hover:bg-blue-500"
-                : " bg-none hover:bg-blue-200",
-              "cursor-pointer",
-            )}
-            onClick={() => setCurrentPage(i + 1)}
-          >
-            {i + 1}
-          </Button>
-        ))}
-        <Button
-          variant="outline"
-          size="icon"
-          disabled={currentPage === totalPages}
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          className="cursor-pointer"
-        >
-          <ChevronRight />
-        </Button>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+      />
+
+      <DeletePharm
+        opneDelete={openDelete}
+        pillDelete={pillDelete}
+        setOpenDelete={setOpenDelete}
+        setPillDelete={setPillDelete}
+      />
     </div>
   );
 };

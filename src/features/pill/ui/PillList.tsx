@@ -1,5 +1,7 @@
-import { FakePills, type PillType } from "@/features/pill/lib/data";
+import { pill_api } from "@/features/pill/lib/api";
+import { type PillListData, type PillType } from "@/features/pill/lib/data";
 import AddedPill from "@/features/pill/ui/AddedPill";
+import DeletePill from "@/features/pill/ui/DeletePill";
 import formatPrice from "@/shared/lib/formatPrice";
 import { Button } from "@/shared/ui/button";
 import {
@@ -10,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
+import Pagination from "@/shared/ui/pagination";
 import {
   Table,
   TableBody,
@@ -18,33 +21,40 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import clsx from "clsx";
-import { ChevronLeft, ChevronRight, Edit, Plus, Trash } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Edit, Plus, Trash } from "lucide-react";
+import { useState } from "react";
 
 const PillList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
-  const [plans, setPlans] = useState<PillType[]>(FakePills);
+  const limit = 20;
+  const [nameFilter, setNameFilter] = useState<string>("");
+
+  const { data } = useQuery({
+    queryKey: ["pill_list", nameFilter, currentPage],
+    queryFn: () =>
+      pill_api.list({
+        limit,
+        offset: (currentPage - 1) * limit,
+        name: nameFilter,
+      }),
+    select(data) {
+      return data.data.data;
+    },
+  });
+
+  const totalPages = data ? Math.ceil(data.count / limit) : 1;
 
   const [editingPlan, setEditingPlan] = useState<PillType | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [nameFilter, setNameFilter] = useState<string>("");
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [pillDelete, setPillDelete] = useState<PillListData | null>(null);
 
-  const handleDelete = (id: number) => {
-    setPlans(plans.filter((p) => p.id !== id));
+  const handleDelete = (id: PillListData) => {
+    setOpenDelete(true);
+    setPillDelete(id);
   };
-
-  const filteredPlans = useMemo(() => {
-    return plans.filter((item) => {
-      const statusMatch = item.name
-        .toLowerCase()
-        .includes(nameFilter.toLowerCase());
-
-      return statusMatch;
-    });
-  }, [plans, nameFilter]);
 
   return (
     <div className="flex flex-col h-full p-10 w-full">
@@ -79,7 +89,6 @@ const PillList = () => {
               <AddedPill
                 initialValues={editingPlan}
                 setDialogOpen={setDialogOpen}
-                setPlans={setPlans}
               />
             </DialogContent>
           </Dialog>
@@ -97,7 +106,7 @@ const PillList = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredPlans.map((plan) => (
+            {data?.results.map((plan) => (
               <TableRow key={plan.id} className="text-start">
                 <TableCell>{plan.id}</TableCell>
                 <TableCell>{plan.name}</TableCell>
@@ -118,7 +127,7 @@ const PillList = () => {
                     variant="destructive"
                     size="sm"
                     className="cursor-pointer"
-                    onClick={() => handleDelete(plan.id)}
+                    onClick={() => handleDelete(plan)}
                   >
                     <Trash className="h-4 w-4" />
                   </Button>
@@ -129,44 +138,18 @@ const PillList = () => {
         </Table>
       </div>
 
-      <div className="mt-2 sticky bottom-0 bg-white flex justify-end gap-2 z-10 py-2 border-t">
-        <Button
-          variant="outline"
-          size="icon"
-          disabled={currentPage === 1}
-          className="cursor-pointer"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        >
-          <ChevronLeft />
-        </Button>
-        {Array.from({ length: totalPages }, (_, i) => (
-          <Button
-            key={i}
-            variant={currentPage === i + 1 ? "default" : "outline"}
-            size="icon"
-            className={clsx(
-              currentPage === i + 1
-                ? "bg-blue-500 hover:bg-blue-500"
-                : " bg-none hover:bg-blue-200",
-              "cursor-pointer",
-            )}
-            onClick={() => setCurrentPage(i + 1)}
-          >
-            {i + 1}
-          </Button>
-        ))}
-        <Button
-          variant="outline"
-          size="icon"
-          disabled={currentPage === totalPages}
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          className="cursor-pointer"
-        >
-          <ChevronRight />
-        </Button>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+      />
+
+      <DeletePill
+        opneDelete={openDelete}
+        setOpenDelete={setOpenDelete}
+        pillDelete={pillDelete}
+        setPillDelete={setPillDelete}
+      />
     </div>
   );
 };

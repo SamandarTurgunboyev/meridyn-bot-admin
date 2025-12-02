@@ -1,6 +1,7 @@
 "use client";
 
-import type { TourPlanType } from "@/features/tour-plan/lib/data";
+import type { PlanTourListDataRes } from "@/features/tour-plan/lib/data";
+import formatDate from "@/shared/lib/formatDate";
 import { Badge } from "@/shared/ui/badge";
 import {
   Dialog,
@@ -13,7 +14,7 @@ import { Circle, Map, Placemark, YMaps } from "@pbe/react-yandex-maps";
 interface Props {
   open: boolean;
   setOpen: (v: boolean) => void;
-  plan: TourPlanType | null;
+  plan: PlanTourListDataRes | null;
 }
 
 const TourPlanDetailDialog = ({ open, setOpen, plan }: Props) => {
@@ -33,55 +34,50 @@ const TourPlanDetailDialog = ({ open, setOpen, plan }: Props) => {
           <div>
             <p className="font-semibold">Foydalanuvchi:</p>
             <p>
-              {plan.user.firstName} {plan.user.lastName}
+              {plan.user.first_name} {plan.user.last_name}
             </p>
           </div>
 
           {/* District */}
           <div>
             <p className="font-semibold">Hudud:</p>
-            <p>{plan.district}</p>
+            <p>{plan.place_name}</p>
           </div>
 
           {/* Sana */}
           <div>
             <p className="font-semibold">Sana:</p>
-            <p>{plan.date.toLocaleString()}</p>
+            <p>{plan.date && formatDate.format(plan.date, "YYYY-MM-DD")}</p>
           </div>
 
           {/* Status */}
           <div>
             <p className="font-semibold">Status:</p>
             <Badge
-              className={
-                plan.status === "completed" ? "bg-green-600" : "bg-yellow-500"
-              }
+              className={plan.location_send ? "bg-green-600" : "bg-yellow-500"}
             >
-              {plan.status === "completed" ? "Bajarilgan" : "Rejalashtirilgan"}
+              {plan.location_send ? "Bajarilgan" : "Rejalashtirilgan"}
             </Badge>
           </div>
 
-          {plan.userLocation && (
+          {plan.location_send && (
             <YMaps>
               <Map
                 defaultState={{
-                  center: [
-                    Number(plan.userLocation.lat),
-                    Number(plan.userLocation.long),
-                  ],
+                  center: [Number(plan.latitude), Number(plan.longitude)],
                   zoom: 16,
                 }}
                 width="100%"
                 height="300px"
               >
                 <Placemark
-                  geometry={[
-                    Number(plan.userLocation.lat),
-                    Number(plan.userLocation.long),
-                  ]}
+                  geometry={[Number(plan.latitude), Number(plan.longitude)]}
                 />
                 <Circle
-                  geometry={[[Number(plan.lat), Number(plan.long)], 100]}
+                  geometry={[
+                    [Number(plan.latitude), Number(plan.longitude)],
+                    100,
+                  ]}
                   options={{
                     fillColor: "rgba(0, 150, 255, 0.2)",
                     strokeColor: "rgba(0, 150, 255, 0.8)",

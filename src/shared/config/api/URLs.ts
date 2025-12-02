@@ -1,23 +1,19 @@
-const BASE_URL =
-  import.meta.env.VITE_API_URL || "https://api.meridynpharma.com";
-
-const LOGIN = "/api/v1/authentication/admin_login/";
-const USER = "/api/v1/admin/user/";
-const REGION = "/api/v1/admin/district/";
-const REGIONS = "/api/v1/admin/region/";
-const DISTRICT = "/api/v1/admin/district/";
-const DOCTOR = "/api/v1/admin/doctor/";
-const OBJECT = "/api/v1/admin/place/";
-const PHARMACIES = "/api/v1/admin/pharmacy/";
-
-export {
-  BASE_URL,
-  DISTRICT,
-  DOCTOR,
-  LOGIN,
-  OBJECT,
-  PHARMACIES,
-  REGION,
-  REGIONS,
-  USER,
+export const API_URLS = {
+  BASE_URL: import.meta.env.VITE_API_URL || "https://api.meridynpharma.com",
+  LOGIN: "/api/v1/authentication/admin_login/",
+  USER: "/api/v1/admin/user/",
+  REGION: "/api/v1/admin/district/",
+  REGIONS: "/api/v1/admin/region/",
+  DISTRICT: "/api/v1/admin/district/",
+  DOCTOR: "/api/v1/admin/doctor/",
+  OBJECT: "/api/v1/admin/place/",
+  PHARMACIES: "/api/v1/admin/pharmacy/",
+  PLANS: "/api/v1/admin/plan/",
+  PILL: "/api/v1/admin/product/",
+  LOCATION: "/api/v1/admin/location/",
+  USER_LOCATION: "/api/v1/admin/user_location/",
+  ORDER: "/api/v1/admin/order/",
+  FACTORY: "/api/v1/admin/factory/",
+  REPORT: "/api/v1/admin/payment/",
+  TOUR_PLAN: "/api/v1/admin/tour_plan/",
 };

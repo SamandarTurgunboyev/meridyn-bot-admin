@@ -1,36 +1,36 @@
-import { ReportsData, type ReportsTypeList } from "@/features/reports/lib/data";
-import AddedReport from "@/features/reports/ui/AddedReport";
+import { report_api } from "@/features/reports/lib/api";
 import ReportsTable from "@/features/reports/ui/ReportsTable";
-import { Button } from "@/shared/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/shared/ui/dialog";
 import Pagination from "@/shared/ui/pagination";
-import { Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 const ReportsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
-  const [plans, setPlans] = useState<ReportsTypeList[]>(ReportsData);
+  const limit = 20;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["report_list", currentPage],
+    queryFn: () =>
+      report_api.list({ limit, offset: (currentPage - 1) * limit }),
+    select(data) {
+      return data.data.data;
+    },
+  });
+  const totalPages = data ? Math.ceil(data.count / limit) : 1;
+  // const [plans, setPlans] = useState<ReportsTypeList[]>(ReportsData);
 
-  const [editingPlan, setEditingPlan] = useState<ReportsTypeList | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  // const [editingPlan, setEditingPlan] = useState<ReportsTypeList | null>(null);
+  // const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleDelete = (id: number) => {
-    setPlans(plans.filter((p) => p.id !== id));
-  };
+  // const handleDelete = (id: number) => {
+  //   setPlans(plans.filter((p) => p.id !== id));
+  // };
 
   return (
     <div className="flex flex-col h-full p-10 w-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
         <h1 className="text-2xl font-bold">To'lovlar</h1>
 
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        {/* <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button
               variant="default"
@@ -53,14 +53,16 @@ const ReportsList = () => {
               setPlans={setPlans}
             />
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
       </div>
 
       <ReportsTable
-        handleDelete={handleDelete}
-        plans={plans}
-        setDialogOpen={setDialogOpen}
-        setEditingPlan={setEditingPlan}
+        // handleDelete={handleDelete}
+        plans={data ? data.results : []}
+        // setDialogOpen={setDialogOpen}
+        // setEditingPlan={setEditingPlan}
+        isLoading={isLoading}
+        isError={isError}
       />
 
       <Pagination

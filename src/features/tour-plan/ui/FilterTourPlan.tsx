@@ -1,57 +1,44 @@
+import type { PlanTourListDataRes } from "@/features/tour-plan/lib/data";
+import AddedTourPlan from "@/features/tour-plan/ui/AddedTourPlan";
 import { Button } from "@/shared/ui/button";
 import { Calendar } from "@/shared/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
-import { ChevronDownIcon } from "lucide-react";
-import type { Dispatch, SetStateAction } from "react";
+import { ChevronDownIcon, Plus } from "lucide-react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 
 interface Props {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
   dateFilter: Date | undefined;
   setDateFilter: Dispatch<SetStateAction<Date | undefined>>;
   searchUser: string;
   setSearchUser: Dispatch<SetStateAction<string>>;
-  viewLocation: "user_send" | "user_send_object";
-  setViewLocation: Dispatch<SetStateAction<"user_send" | "user_send_object">>;
+  dialogOpen: boolean;
+  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  setEditingPlan: Dispatch<SetStateAction<PlanTourListDataRes | null>>;
+  editingPlan: PlanTourListDataRes | null;
 }
 
-const LocationFilter = ({
-  open,
-  setOpen,
+const FilterTourPlan = ({
   dateFilter,
   setDateFilter,
   searchUser,
   setSearchUser,
-  viewLocation,
-  setViewLocation,
+  setDialogOpen,
+  dialogOpen,
+  setEditingPlan,
+  editingPlan,
 }: Props) => {
-  return (
-    <div className="flex gap-2 w-full md:w-auto">
-      <Select
-        value={viewLocation}
-        onValueChange={(v) =>
-          setViewLocation(v as "user_send" | "user_send_object")
-        }
-      >
-        <SelectTrigger className="w-[240px] !h-12">
-          <SelectValue placeholder="Tanlang" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="user_send_object">
-            Obyektdan jo'natilgan
-          </SelectItem>
-          <SelectItem value="user_send">Turgan joyidan jo'natilgan</SelectItem>
-        </SelectContent>
-      </Select>
+  const [open, setOpen] = useState<boolean>(false);
 
+  return (
+    <div className="flex gap-2 mb-4">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -72,6 +59,7 @@ const LocationFilter = ({
               setDateFilter(date);
               setOpen(false);
             }}
+            toYear={new Date().getFullYear() + 50}
           />
           <div className="p-2 border-t bg-white">
             <Button
@@ -95,8 +83,31 @@ const LocationFilter = ({
         value={searchUser}
         onChange={(e) => setSearchUser(e.target.value)}
       />
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <Button
+            variant="default"
+            className="bg-blue-500 cursor-pointer hover:bg-blue-500 h-12"
+            onClick={() => setEditingPlan(null)}
+          >
+            <Plus className="!h-5 !w-5" /> Qo'shish
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl">
+              {editingPlan ? "Rejani tahrirlash" : "Yangi reja qo'shish"}
+            </DialogTitle>
+          </DialogHeader>
+
+          <AddedTourPlan
+            initialValues={editingPlan}
+            setDialogOpen={setDialogOpen}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
-export default LocationFilter;
+export default FilterTourPlan;
