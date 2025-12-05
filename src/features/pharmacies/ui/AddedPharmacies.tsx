@@ -102,16 +102,19 @@ const AddedPharmacies = ({ initialValues, setDialogOpen }: Props) => {
       return data.data.data;
     },
   });
+  const user_id = form.watch("user");
 
   const { data: object, isLoading: isObjectLoading } = useQuery({
-    queryKey: ["object_list", searchUser, selectDiscrit],
+    queryKey: ["object_list", searchUser, selectDiscrit, user_id],
     queryFn: () => {
       const params: {
         name?: string;
         district?: string;
+        user_id?: number;
       } = {
         name: searchUser,
         district: selectDiscrit,
+        user_id: Number(user_id),
       };
 
       return object_api.list(params);
@@ -120,8 +123,6 @@ const AddedPharmacies = ({ initialValues, setDialogOpen }: Props) => {
       return data.data.data;
     },
   });
-
-  const user_id = form.watch("user");
 
   const { data: discrit, isLoading: discritLoading } = useQuery({
     queryKey: ["discrit_list", searchDiscrit, user_id],

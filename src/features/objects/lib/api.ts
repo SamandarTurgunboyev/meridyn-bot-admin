@@ -14,6 +14,7 @@ export const object_api = {
     name?: string;
     district?: string;
     user?: string;
+    user_id?: number;
   }): Promise<AxiosResponse<ObjectListRes>> {
     const res = await httpClient.get(`${API_URLS.OBJECT}list/`, { params });
     return res;

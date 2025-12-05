@@ -1,4 +1,5 @@
 import {
+  AlertCircle,
   BriefcaseMedical,
   Building2,
   Calendar,
@@ -95,6 +96,16 @@ const items = [
     title: "Farmasevtikalar",
     url: "/dashboard/pharmaceuticals",
     icon: Microscope,
+  },
+  {
+    title: "Yordam so'rovlari",
+    url: "/dashboard/support",
+    icon: AlertCircle,
+  },
+  {
+    title: "Tarqatilgan dorilar",
+    url: "/dashboard/distributed-product",
+    icon: Pill,
   },
 ];
 

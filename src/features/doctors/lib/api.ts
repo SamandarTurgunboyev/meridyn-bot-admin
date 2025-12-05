@@ -17,6 +17,7 @@ export const doctor_api = {
     work_place?: string;
     sphere?: string;
     user?: string;
+    user_id?: number;
   }): Promise<AxiosResponse<DoctorListRes>> {
     const res = await httpClient.get(`${API_URLS.DOCTOR}list/`, { params });
     return res;

@@ -1,4 +1,5 @@
 import LoginLayout from "@/LoginLayout";
+import Distributed from "@/pages/Distributed";
 import Districts from "@/pages/Districts";
 import Doctors from "@/pages/Doctors";
 import UsersPage from "@/pages/Home";
@@ -11,6 +12,7 @@ import Region from "@/pages/Region";
 import Reports from "@/pages/Reports";
 import SentLocations from "@/pages/SentLocations";
 import Specifications from "@/pages/Specifications";
+import Support from "@/pages/Support";
 import TourPlan from "@/pages/TourPlan";
 import routesConfig from "@/providers/routing/config";
 import { Navigate, useRoutes } from "react-router-dom";
@@ -77,6 +79,14 @@ const AppRouter = () => {
     {
       path: "/dashboard/region",
       element: <Region />,
+    },
+    {
+      path: "/dashboard/support",
+      element: <Support />,
+    },
+    {
+      path: "/dashboard/distributed-product/",
+      element: <Distributed />,
     },
   ]);
 

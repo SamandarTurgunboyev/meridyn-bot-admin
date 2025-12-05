@@ -59,6 +59,10 @@ const PalanTable = ({
               <TableHead className="text-start">Reja nomi</TableHead>
               <TableHead className="text-start">Tavsifi</TableHead>
               <TableHead className="text-start">Kimga tegishli</TableHead>
+              <TableHead className="text-start">Shifokor biriktirgan</TableHead>
+              <TableHead className="text-start">
+                Dorixonaga biriktirgan
+              </TableHead>
               <TableHead className="text-start">Status</TableHead>
               <TableHead className="text-right">Harakatlar</TableHead>
             </TableRow>
@@ -72,12 +76,20 @@ const PalanTable = ({
                 <TableCell>
                   {plan.user.first_name + " " + plan.user.last_name}
                 </TableCell>
+                <TableCell>
+                  {plan.doctor
+                    ? plan.doctor.first_name + " " + plan.doctor.last_name
+                    : "-"}
+                </TableCell>
+                <TableCell>
+                  {plan.pharmacy ? plan.pharmacy.name : "-"}
+                </TableCell>
                 <TableCell
                   className={clsx(
-                    plan.is_done ? "text-green-500" : "text-red-500",
+                    plan.comment ? "text-green-500" : "text-red-500",
                   )}
                 >
-                  {plan.is_done ? "Bajarilgan" : "Bajarilmagan"}
+                  {plan.comment ? "Bajarilgan" : "Bajarilmagan"}
                 </TableCell>
                 <TableCell className="flex gap-2 justify-end">
                   <Button
@@ -94,7 +106,7 @@ const PalanTable = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={plan.is_done}
+                    disabled={plan.comment ? true : false}
                     className="bg-blue-500 text-white hover:bg-blue-500 hover:text-white cursor-pointer"
                     onClick={() => {
                       setEditingPlan(plan);
@@ -107,7 +119,7 @@ const PalanTable = ({
                     variant="destructive"
                     size="sm"
                     className="cursor-pointer"
-                    disabled={plan.is_done}
+                    disabled={plan.comment ? true : false}
                     onClick={() => handleDelete(plan)}
                   >
                     <Trash className="h-4 w-4" />

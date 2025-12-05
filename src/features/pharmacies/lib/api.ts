@@ -15,6 +15,7 @@ export const pharmacies_api = {
     place?: string;
     district?: string;
     user?: string;
+    user_id?: number;
   }): Promise<AxiosResponse<PharmaciesListRes>> {
     const res = await httpClient.get(`${API_URLS.PHARMACIES}list/`, { params });
     return res;

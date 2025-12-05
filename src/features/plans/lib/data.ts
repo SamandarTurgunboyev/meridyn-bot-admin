@@ -26,12 +26,27 @@ export interface PlanListData {
   title: string;
   description: string;
   date: string;
+  comment: null | string;
+  doctor: {
+    id: number;
+    first_name: string;
+    last_name: string;
+  } | null;
+  pharmacy: {
+    id: number;
+    name: string;
+  } | null;
   user: {
     id: number;
     first_name: string;
     last_name: string;
   };
-  is_done: true;
+  longitude: number;
+  latitude: number;
+  extra_location: {
+    latitude: number;
+    longitude: number;
+  };
   created_at: string;
 }
 
@@ -40,10 +55,18 @@ export interface PlanCreateReq {
   description: string;
   date: string;
   user_id: number;
+  doctor_id: number | null;
+  pharmacy_id: number | null;
+  longitude: number;
+  latitude: number;
+  extra_location: { longitude: number; latitude: number };
 }
 
 export interface PlanUpdateReq {
   title: string;
   description: string;
   date: string;
+  longitude: number;
+  latitude: number;
+  extra_location: { longitude: number; latitude: number };
 }
