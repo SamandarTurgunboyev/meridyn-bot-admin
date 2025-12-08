@@ -1,5 +1,6 @@
 "use client";
 
+import { pill_api } from "@/features/pill/lib/api";
 import type { OrderListDataRes } from "@/features/specifications/lib/data";
 import formatPrice from "@/shared/lib/formatPrice";
 import { Button } from "@/shared/ui/button";
@@ -9,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
 import { HardDriveDownloadIcon } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 
@@ -23,6 +25,13 @@ export const SpecificationDetail = ({
   open,
   setOpen,
 }: Props) => {
+  const { data } = useQuery({
+    queryKey: ["pill_list"],
+    queryFn: () => pill_api.list({ limit: 999, offset: 1 }),
+    select(data) {
+      return data.data.data;
+    },
+  });
   const downloadFile = async (fileUrl: string, fileName: string) => {
     try {
       const response = await fetch(fileUrl, {
@@ -107,45 +116,50 @@ export const SpecificationDetail = ({
             </h3>
 
             <div className="space-y-3">
-              {specification.order_items.map((med, index) => (
-                <div
-                  key={med.id}
-                  className="bg-white rounded-lg p-4 border border-gray-200 hover:border-indigo-300 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded">
-                          #{index + 1}
-                        </span>
-                        <p className="font-semibold text-gray-800">
-                          {med.product}
+              {specification.order_items.map((med, index) => {
+                const pill_name = data?.results.find(
+                  (e) => e.id === med.product,
+                );
+                return (
+                  <div
+                    key={med.id}
+                    className="bg-white rounded-lg p-4 border border-gray-200 hover:border-indigo-300 transition-colors"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2 py-1 rounded">
+                            #{index + 1}
+                          </span>
+                          <p className="font-semibold text-gray-800">
+                            {pill_name?.name}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <span>
+                            Miqdor: <strong>{med.quantity} ta</strong>
+                          </span>
+                          <span>×</span>
+                          <span>
+                            Narx:{" "}
+                            <strong>
+                              {formatPrice(
+                                Number(med.total_price) / med.quantity,
+                              )}
+                            </strong>
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right ml-4">
+                        <p className="text-xs text-gray-500 mb-1">Jami</p>
+                        <p className="text-lg font-bold text-indigo-600">
+                          {formatPrice(med.total_price)}
                         </p>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span>
-                          Miqdor: <strong>{med.quantity} ta</strong>
-                        </span>
-                        <span>×</span>
-                        <span>
-                          Narx:{" "}
-                          <strong>
-                            {formatPrice(
-                              Number(med.total_price) / med.quantity,
-                            )}
-                          </strong>
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right ml-4">
-                      <p className="text-xs text-gray-500 mb-1">Jami</p>
-                      <p className="text-lg font-bold text-indigo-600">
-                        {formatPrice(med.total_price)}
-                      </p>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
