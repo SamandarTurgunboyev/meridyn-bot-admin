@@ -47,3 +47,10 @@ export const user_api = {
     return res;
   },
 };
+
+export const send_message = {
+  async send(body: { user_ids: number[]; message: string }) {
+    const res = await httpClient.post(API_URLS.SEND_MESSAGE, body);
+    return res;
+  },
+};

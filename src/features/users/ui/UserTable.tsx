@@ -1,6 +1,7 @@
 import { user_api } from "@/features/users/lib/api";
 import type { UserListData, UserListRes } from "@/features/users/lib/data";
 import { Button } from "@/shared/ui/button";
+import { Checkbox } from "@/shared/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -22,8 +23,11 @@ interface Props {
   isError: boolean;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   setEditingUser: Dispatch<SetStateAction<UserListData | null>>;
+  setUserList: Dispatch<SetStateAction<number[] | []>>;
   handleDelete: (user: UserListData) => void;
   currentPage: number;
+  userList: number[] | null;
+  sendMessage: boolean;
 }
 
 const UserTable = ({
@@ -32,18 +36,23 @@ const UserTable = ({
   isError,
   setDialogOpen,
   handleDelete,
+  userList,
   setEditingUser,
+  setUserList,
+  sendMessage,
   currentPage,
 }: Props) => {
   const queryClient = useQueryClient();
-
   const [pendingUserId, setPendingUserId] = useState<number | null>(null);
+
+  // TableHeader checkbox holati
+  const allSelected = data?.data.data.results.length
+    ? userList?.length === data.data.data.results.length
+    : false;
 
   const { mutate: active } = useMutation({
     mutationFn: (id: number) => user_api.active(id),
-    onMutate: (id) => {
-      setPendingUserId(id);
-    },
+    onMutate: (id) => setPendingUserId(id),
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["user_list"] });
       toast.success(`Foydalanuvchi aktivlashdi`);
@@ -51,29 +60,50 @@ const UserTable = ({
     },
     onError: (err: AxiosError) => {
       const errMessage = err.response?.data as { message: string };
-      const messageText = errMessage.message;
       setPendingUserId(null);
-      toast.error(messageText || "Xatolik yuz berdi", {
+      toast.error(errMessage?.message || "Xatolik yuz berdi", {
         richColors: true,
         position: "top-center",
       });
     },
   });
 
-  const handleActivate = (userId: number) => {
-    active(userId);
+  const handleActivate = (userId: number) => active(userId);
+
+  // TableHeader checkbox toggle
+  const handleSelectAll = () => {
+    if (!data) return;
+    if (allSelected) {
+      setUserList([]);
+      setUserList([]);
+    } else {
+      const allIds = data.data.data.results.map((u) => u.id);
+      setUserList(allIds);
+      setUserList(allIds);
+    }
+  };
+
+  // Individual checkbox toggle
+  const handleSelect = (id: number) => {
+    let updated: number[] = [];
+    if (userList) {
+      if (userList?.includes(id)) {
+        updated = userList.filter((i) => i !== id);
+      } else {
+        updated = [...userList, id];
+      }
+      setUserList(updated);
+      setUserList(updated.length ? updated : []);
+    }
   };
 
   return (
     <div className="flex-1 overflow-auto">
       {isLoading && (
         <div className="h-full flex items-center justify-center bg-white/70 z-10">
-          <span className="text-lg font-medium">
-            <Loader2 className="animate-spin" />
-          </span>
+          <Loader2 className="animate-spin" />
         </div>
       )}
-
       {isError && (
         <div className="h-full flex items-center justify-center z-10">
           <span className="text-lg font-medium text-red-600">
@@ -81,10 +111,20 @@ const UserTable = ({
           </span>
         </div>
       )}
+
       {!isLoading && !isError && (
         <Table>
           <TableHeader>
             <TableRow className="text-[16px] text-center">
+              {sendMessage && (
+                <TableHead className="text-start">
+                  <Checkbox
+                    id="user_id_all"
+                    checked={allSelected}
+                    onCheckedChange={handleSelectAll}
+                  />
+                </TableHead>
+              )}
               <TableHead className="text-start">ID</TableHead>
               <TableHead className="text-start">Ismi</TableHead>
               <TableHead className="text-start">Familiyasi</TableHead>
@@ -93,66 +133,33 @@ const UserTable = ({
               <TableHead className="text-right">Harakatlar</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {data && data.data.data.results.length > 0 ? (
               data.data.data.results.map((user, index) => (
                 <TableRow key={user.id} className="text-[14px] text-start">
+                  {sendMessage && (
+                    <TableCell className="text-start">
+                      <Checkbox
+                        id={`user_id_${user.id}`}
+                        checked={userList?.includes(user.id)}
+                        onCheckedChange={() => handleSelect(user.id)}
+                      />
+                    </TableCell>
+                  )}
                   <TableCell>{index + 1 + (currentPage - 1) * 20}</TableCell>
                   <TableCell>{user.first_name}</TableCell>
                   <TableCell>{user.last_name}</TableCell>
                   <TableCell>{user.region.name}</TableCell>
                   <TableCell className="text-center">
-                    {/* <Select
-                      value={user.is_active ? "true" : "false"}
-                      onValueChange={() => handleActivate(user.id)}
-                    >
-                      <SelectTrigger
-                        className={clsx(
-                          "w-[180px] mx-auto",
-                          user.is_active
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800",
-                        )}
-                      >
-                        {pendingUserId === user.id ? (
-                          <Loader2 className="animate-spin h-4 w-4 mx-auto" />
-                        ) : (
-                          <SelectValue placeholder="Holati" />
-                        )}
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem
-                          disabled={pendingUserId === user.id}
-                          value="true"
-                          className="text-green-500 hover:!text-green-500"
-                        >
-                          {pendingUserId === user.id ? (
-                            <Loader2 className="animate-spin h-4 w-4 mx-auto" />
-                          ) : (
-                            "Faol"
-                          )}
-                        </SelectItem>
-                        <SelectItem
-                          disabled={pendingUserId === user.id}
-                          value="false"
-                          className="text-red-500 hover:!text-red-500"
-                        >
-                          {pendingUserId === user.id ? (
-                            <Loader2 className="animate-spin h-4 w-4 mx-auto" />
-                          ) : (
-                            "Faol emas"
-                          )}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select> */}
                     <Button
                       className={clsx(
                         "mx-auto cursor-pointer",
                         user.is_active
                           ? "bg-green-500 hover:bg-green-500"
-                          : "bg-blue-500  hover:bg-blue-500",
+                          : "bg-blue-500 hover:bg-blue-500",
                       )}
-                      disabled={user.is_active}
+                      disabled={user.is_active || sendMessage}
                       onClick={() => handleActivate(user.id)}
                     >
                       {pendingUserId === user.id ? (
@@ -170,6 +177,7 @@ const UserTable = ({
                         setEditingUser(user);
                         setDialogOpen(true);
                       }}
+                      disabled={sendMessage}
                       className="bg-blue-500 text-white hover:bg-blue-500 hover:text-white cursor-pointer"
                     >
                       <Edit className="h-4 w-4" />
@@ -177,6 +185,7 @@ const UserTable = ({
                     <Button
                       variant="destructive"
                       size="sm"
+                      disabled={sendMessage}
                       onClick={() => handleDelete(user)}
                       className="cursor-pointer"
                     >
@@ -187,7 +196,7 @@ const UserTable = ({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-4 text-lg">
+                <TableCell colSpan={7} className="text-center py-4 text-lg">
                   Foydalanuvchilar topilmadi.
                 </TableCell>
               </TableRow>

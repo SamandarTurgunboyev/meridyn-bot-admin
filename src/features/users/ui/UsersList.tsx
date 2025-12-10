@@ -21,6 +21,8 @@ const UsersList = () => {
   const [statusFilter, setStatusFilter] = useState<"all" | "true" | "false">(
     "all",
   );
+  const [sendMessage, setSendMessage] = useState<boolean>(false);
+  const [userList, setUserList] = useState<number[] | []>([]);
 
   const [userDelete, setUserDelete] = useState<UserListData | null>(null);
   const [opneDelete, setOpenDelete] = useState<boolean>(false);
@@ -72,12 +74,16 @@ const UsersList = () => {
             setSearchTerm={setSearchTerm}
             setStatusFilter={setStatusFilter}
             statusFilter={statusFilter}
+            sendMessage={sendMessage}
+            setUserList={setUserList}
             regionValue={regionValue}
+            setSendMessage={setSendMessage}
             setRegionValue={setRegionValue}
             dialogOpen={dialogOpen}
             setDialogOpen={setDialogOpen}
             editingUser={editingUser}
             setEditingUser={setEditingUser}
+            userList={userList}
           />
         </div>
 
@@ -89,6 +95,9 @@ const UsersList = () => {
           setDialogOpen={setDialogOpen}
           handleDelete={handleDelete}
           currentPage={currentPage}
+          setUserList={setUserList}
+          userList={userList}
+          sendMessage={sendMessage}
         />
         <Pagination
           currentPage={currentPage}
