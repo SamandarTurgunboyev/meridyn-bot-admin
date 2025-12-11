@@ -62,7 +62,9 @@ export default function AddDistrict({ initialValues, setDialogOpen }: Props) {
     onError: (err: AxiosError) => {
       const errMessage = err.response?.data as { message: string };
       const messageText = errMessage.message;
-      toast.error(messageText || "Xatolik yuz berdi", {
+      const errMessageName = err.response?.data as { data: { name: [string] } };
+      const messageTextName = errMessageName.data.name[0];
+      toast.error(messageTextName || messageText || "Xatolik yuz berdi", {
         richColors: true,
         position: "top-center",
       });
@@ -84,8 +86,10 @@ export default function AddDistrict({ initialValues, setDialogOpen }: Props) {
     },
     onError: (err: AxiosError) => {
       const errMessage = err.response?.data as { message: string };
+      const errMessageName = err.response?.data as { data: { name: [string] } };
       const messageText = errMessage.message;
-      toast.error(messageText || "Xatolik yuz berdi", {
+      const messageTextName = errMessageName.data.name[0];
+      toast.error(messageTextName || messageText || "Xatolik yuz berdi", {
         richColors: true,
         position: "top-center",
       });
