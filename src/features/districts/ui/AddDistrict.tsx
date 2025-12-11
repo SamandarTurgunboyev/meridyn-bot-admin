@@ -64,10 +64,15 @@ export default function AddDistrict({ initialValues, setDialogOpen }: Props) {
       const messageText = errMessage.message;
       const errMessageName = err.response?.data as { data: { name: [string] } };
       const messageTextName = errMessageName.data.name[0];
-      toast.error(messageTextName || messageText || "Xatolik yuz berdi", {
-        richColors: true,
-        position: "top-center",
-      });
+      toast.error(
+        (messageTextName && "Bu tuman oldin qo'shilgan") ||
+          messageText ||
+          "Xatolik yuz berdi",
+        {
+          richColors: true,
+          position: "top-center",
+        },
+      );
     },
   });
 
