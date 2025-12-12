@@ -1,4 +1,5 @@
 import type { PlanTourListDataRes } from "@/features/tour-plan/lib/data";
+import { userStore } from "@/shared/hooks/user";
 import formatDate from "@/shared/lib/formatDate";
 import { Button } from "@/shared/ui/button";
 import {
@@ -36,6 +37,7 @@ const TourPlanTable = ({
   setDialogOpen,
   setDetailOpen,
 }: Props) => {
+  const { user: getme } = userStore();
   return (
     <div className="flex-1 overflow-auto">
       {(isLoading || isFetching) && (
@@ -107,14 +109,17 @@ const TourPlanTable = ({
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(plan)}
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
+                    {getme?.is_superuser && (
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        disabled={!getme?.is_superuser}
+                        className="cursor-pointer"
+                        onClick={() => handleDelete(plan)}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

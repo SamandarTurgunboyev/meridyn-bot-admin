@@ -2,6 +2,7 @@ import { pill_api } from "@/features/pill/lib/api";
 import { type PillListData, type PillType } from "@/features/pill/lib/data";
 import AddedPill from "@/features/pill/ui/AddedPill";
 import DeletePill from "@/features/pill/ui/DeletePill";
+import { userStore } from "@/shared/hooks/user";
 import formatPrice from "@/shared/lib/formatPrice";
 import { Button } from "@/shared/ui/button";
 import {
@@ -26,6 +27,7 @@ import { Edit, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 
 const PillList = () => {
+  const { user: getme } = userStore();
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 20;
   const [nameFilter, setNameFilter] = useState<string>("");
@@ -123,14 +125,17 @@ const PillList = () => {
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="cursor-pointer"
-                    onClick={() => handleDelete(plan)}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
+                  {getme?.is_superuser && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="cursor-pointer"
+                      onClick={() => handleDelete(plan)}
+                      disabled={!getme.is_superuser}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

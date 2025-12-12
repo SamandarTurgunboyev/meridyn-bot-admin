@@ -21,4 +21,5 @@ export const API_URLS = {
   SUPPORT: `${API_V}admin/support/list/`,
   DISTRIBUTED: `${API_V}admin/distributed_product/list/`,
   SEND_MESSAGE: `${API_V}admin/send_message/`,
+  GET_ME: `${API_V}accounts/user/me/`,
 };

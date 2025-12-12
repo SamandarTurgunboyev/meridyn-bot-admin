@@ -5,6 +5,7 @@ import { type OrderListDataRes } from "@/features/specifications/lib/data";
 import { AddedSpecification } from "@/features/specifications/ui/AddedSpecification";
 import DeleteOrder from "@/features/specifications/ui/DeleteOrder";
 import { SpecificationDetail } from "@/features/specifications/ui/SpecificationDetail ";
+import { userStore } from "@/shared/hooks/user";
 import formatPrice from "@/shared/lib/formatPrice";
 import { Button } from "@/shared/ui/button";
 import {
@@ -34,6 +35,7 @@ const SpecificationsList = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 20;
+  const { user: getme } = userStore();
 
   const {
     data: order,
@@ -154,14 +156,17 @@ const SpecificationsList = () => {
                     >
                       <Pencil size={18} />
                     </Button>
-                    <Button
-                      size="icon"
-                      variant="destructive"
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(item)}
-                    >
-                      <Trash2 size={18} />
-                    </Button>
+                    {getme?.is_superuser && (
+                      <Button
+                        size="icon"
+                        disabled={!getme?.is_superuser}
+                        variant="destructive"
+                        className="cursor-pointer"
+                        onClick={() => handleDelete(item)}
+                      >
+                        <Trash2 size={18} />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

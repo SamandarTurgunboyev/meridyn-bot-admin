@@ -1,5 +1,6 @@
 import { user_api } from "@/features/users/lib/api";
 import type { UserListData, UserListRes } from "@/features/users/lib/data";
+import { userStore } from "@/shared/hooks/user";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import {
@@ -43,6 +44,7 @@ const UserTable = ({
   currentPage,
 }: Props) => {
   const queryClient = useQueryClient();
+  const { user: getme } = userStore();
   const [pendingUserId, setPendingUserId] = useState<number | null>(null);
 
   // TableHeader checkbox holati
@@ -182,15 +184,17 @@ const UserTable = ({
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      disabled={sendMessage}
-                      onClick={() => handleDelete(user)}
-                      className="cursor-pointer"
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
+                    {getme?.is_superuser && (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={!getme?.is_superuser || sendMessage}
+                        onClick={() => handleDelete(user)}
+                        className="cursor-pointer"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

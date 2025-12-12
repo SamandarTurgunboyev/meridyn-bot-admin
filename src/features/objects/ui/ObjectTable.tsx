@@ -1,4 +1,5 @@
 import type { ObjectListData } from "@/features/objects/lib/data";
+import { userStore } from "@/shared/hooks/user";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import {
@@ -33,6 +34,7 @@ const ObjectTable = ({
   isError,
   isLoading,
 }: Props) => {
+  const { user: getme } = userStore();
   return (
     <div className="flex-1 overflow-auto">
       {isLoading && (
@@ -96,14 +98,17 @@ const ObjectTable = ({
                     >
                       <Pencil size={18} />
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(item)}
-                    >
-                      <Trash2 size={18} />
-                    </Button>
+                    {getme?.is_superuser && (
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="cursor-pointer"
+                        disabled={!getme?.is_superuser}
+                        onClick={() => handleDelete(item)}
+                      >
+                        <Trash2 size={18} />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

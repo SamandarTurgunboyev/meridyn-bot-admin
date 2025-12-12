@@ -1,4 +1,5 @@
 import type { DoctorListResData } from "@/features/doctors/lib/data";
+import { userStore } from "@/shared/hooks/user";
 import formatPhone from "@/shared/lib/formatPhone";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
@@ -36,6 +37,7 @@ const TableDoctor = ({
   handleDelete,
   isFetching,
 }: Props) => {
+  const { user: getme } = userStore();
   return (
     <div className="flex-1 overflow-auto">
       {(isLoading || isFetching) && (
@@ -112,14 +114,17 @@ const TableDoctor = ({
                     >
                       <Pencil size={18} />
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(item)}
-                    >
-                      <Trash2 size={18} />
-                    </Button>
+                    {getme?.is_superuser && (
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        disabled={!getme?.is_superuser}
+                        className="cursor-pointer"
+                        onClick={() => handleDelete(item)}
+                      >
+                        <Trash2 size={18} />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

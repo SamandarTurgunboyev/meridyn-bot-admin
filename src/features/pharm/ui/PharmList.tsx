@@ -5,6 +5,7 @@ import {
 } from "@/features/pharm/lib/data";
 import AddedPharm from "@/features/pharm/ui/AddedPharm";
 import DeletePharm from "@/features/pharm/ui/DeletePharm";
+import { userStore } from "@/shared/hooks/user";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
@@ -28,6 +29,7 @@ import { Edit, Loader2, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 
 const PharmList = () => {
+  const { user: getme } = userStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [nameFilter, setNameFilter] = useState<string>("");
   const limit = 20;
@@ -140,14 +142,17 @@ const PharmList = () => {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="cursor-pointer"
-                        onClick={() => handleDelete(plan)}
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
+                      {getme?.is_superuser && (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          disabled={!getme.is_superuser}
+                          className="cursor-pointer"
+                          onClick={() => handleDelete(plan)}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))

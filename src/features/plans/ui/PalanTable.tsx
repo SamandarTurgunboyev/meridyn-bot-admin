@@ -1,4 +1,5 @@
 import type { PlanListData } from "@/features/plans/lib/data";
+import { userStore } from "@/shared/hooks/user";
 import { Button } from "@/shared/ui/button";
 import {
   Table,
@@ -33,6 +34,7 @@ const PalanTable = ({
   setDialogOpen,
   handleDelete,
 }: Props) => {
+  const { user: getme } = userStore();
   return (
     <div className="flex-1 overflow-auto">
       {(isLoading || isFetching) && (
@@ -115,15 +117,19 @@ const PalanTable = ({
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="cursor-pointer"
-                    disabled={plan.comment ? true : false}
-                    onClick={() => handleDelete(plan)}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
+                  {getme?.is_superuser && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="cursor-pointer"
+                      disabled={
+                        !getme?.is_superuser || plan.comment ? true : false
+                      }
+                      onClick={() => handleDelete(plan)}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

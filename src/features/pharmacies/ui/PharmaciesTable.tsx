@@ -1,4 +1,5 @@
 import type { PharmaciesListData } from "@/features/pharmacies/lib/data";
+import { userStore } from "@/shared/hooks/user";
 import formatPhone from "@/shared/lib/formatPhone";
 import { Button } from "@/shared/ui/button";
 import {
@@ -29,6 +30,7 @@ const PharmaciesTable = ({
   setDialogOpen,
   handleDelete,
 }: Props) => {
+  const { user: getme } = userStore();
   return (
     <div className="flex-1 overflow-auto">
       <Table>
@@ -82,14 +84,17 @@ const PharmaciesTable = ({
                 >
                   <Pencil size={18} />
                 </Button>
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="cursor-pointer"
-                  onClick={() => handleDelete(item)}
-                >
-                  <Trash2 size={18} />
-                </Button>
+                {getme?.is_superuser && (
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    disabled={!getme?.is_superuser}
+                    className="cursor-pointer"
+                    onClick={() => handleDelete(item)}
+                  >
+                    <Trash2 size={18} />
+                  </Button>
+                )}
               </TableCell>
             </TableRow>
           ))}

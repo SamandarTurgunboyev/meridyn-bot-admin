@@ -1,4 +1,5 @@
 import type { RegionListResData } from "@/features/region/lib/data";
+import { userStore } from "@/shared/hooks/user";
 import { Button } from "@/shared/ui/button";
 import {
   Table,
@@ -26,6 +27,7 @@ const RegionTable = ({
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   handleDelete: (user: RegionListResData) => void;
 }) => {
+  const { user: getme } = userStore();
   return (
     <div className="flex-1 overflow-auto">
       {isLoading && (
@@ -68,14 +70,17 @@ const RegionTable = ({
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="cursor-pointer"
-                    onClick={() => handleDelete(plan)}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
+                  {getme?.is_superuser && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      disabled={!getme?.is_superuser}
+                      className="cursor-pointer"
+                      onClick={() => handleDelete(plan)}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

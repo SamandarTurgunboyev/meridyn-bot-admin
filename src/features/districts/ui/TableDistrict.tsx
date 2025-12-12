@@ -1,4 +1,5 @@
 import type { DistrictListData } from "@/features/districts/lib/data";
+import { userStore } from "@/shared/hooks/user";
 import { Button } from "@/shared/ui/button";
 import {
   Table,
@@ -30,6 +31,8 @@ const TableDistrict = ({
   setEditingDistrict,
   currentPage,
 }: Props) => {
+  const { user } = userStore();
+
   return (
     <div className="flex-1 overflow-auto">
       {isLoading && (
@@ -79,15 +82,17 @@ const TableDistrict = ({
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
-
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(d)}
-                    className="cursor-pointer"
-                  >
-                    <Trash className="w-4 h-4" />
-                  </Button>
+                  {user?.is_superuser && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(d)}
+                      disabled={!user?.is_superuser}
+                      className="cursor-pointer"
+                    >
+                      <Trash className="w-4 h-4" />
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

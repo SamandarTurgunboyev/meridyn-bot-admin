@@ -1,4 +1,5 @@
 import type { LocationListDataRes } from "@/features/location/lib/data";
+import { userStore } from "@/shared/hooks/user";
 import formatDate from "@/shared/lib/formatDate";
 import { Button } from "@/shared/ui/button";
 import {
@@ -25,6 +26,7 @@ const LocationTable = ({
   setDetailDialog,
   handleDelete,
 }: Props) => {
+  const { user: getme } = userStore();
   return (
     <div className="flex-1 overflow-auto">
       <Table>
@@ -72,14 +74,17 @@ const LocationTable = ({
                 >
                   <Eye size={18} />
                 </Button>
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="cursor-pointer"
-                  onClick={() => handleDelete(item)}
-                >
-                  <Trash2 size={18} />
-                </Button>
+                {getme?.is_superuser && (
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="cursor-pointer"
+                    disabled={!getme?.is_superuser}
+                    onClick={() => handleDelete(item)}
+                  >
+                    <Trash2 size={18} />
+                  </Button>
+                )}
               </TableCell>
             </TableRow>
           ))}
