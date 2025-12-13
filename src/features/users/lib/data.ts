@@ -65,11 +65,11 @@ export interface UserListRes {
 
 export interface UserListData {
   id: number;
-  first_name: string;
-  last_name: string;
+  first_name: string | null;
+  last_name: string | null;
   region: {
     id: number;
-    name: string;
+    name: string | null;
   };
   is_active: boolean;
   telegram_id: string;

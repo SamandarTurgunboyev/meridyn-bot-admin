@@ -150,9 +150,15 @@ const UserTable = ({
                     </TableCell>
                   )}
                   <TableCell>{index + 1 + (currentPage - 1) * 20}</TableCell>
-                  <TableCell>{user.first_name}</TableCell>
-                  <TableCell>{user.last_name}</TableCell>
-                  <TableCell>{user.region.name}</TableCell>
+                  <TableCell>
+                    {user.first_name ? user.first_name : "No'malum"}
+                  </TableCell>
+                  <TableCell>
+                    {user.last_name ? user.last_name : "No'malum"}
+                  </TableCell>
+                  <TableCell>
+                    {user.region ? user.region.name : "No'malum"}
+                  </TableCell>
                   <TableCell className="text-center">
                     <Button
                       className={clsx(

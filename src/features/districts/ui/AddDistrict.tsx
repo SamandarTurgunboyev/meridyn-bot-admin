@@ -212,7 +212,7 @@ export default function AddDistrict({ initialValues, setDialogOpen }: Props) {
                                       : "opacity-0",
                                   )}
                                 />
-                                {u.first_name} {u.last_name} {u.region.name}
+                                {u.first_name} {u.last_name} {u.region?.name}
                               </CommandItem>
                             ))}
                           </CommandGroup>
