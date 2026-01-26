@@ -6,7 +6,6 @@ import {
   ClipboardList,
   FileText,
   Hospital,
-  ListChecks,
   LogOut,
   Map,
   MapPin,
@@ -77,11 +76,11 @@ const items = [
     url: "/dashboard/reports",
     icon: ClipboardList,
   },
-  {
-    title: "Tur planlar",
-    url: "/dashboard/tour-plan",
-    icon: ListChecks,
-  },
+  // {
+  //   title: "Tur planlar",
+  //   url: "/dashboard/tour-plan",
+  //   icon: ListChecks,
+  // },
   {
     title: "Hududlar",
     url: "/dashboard/region",

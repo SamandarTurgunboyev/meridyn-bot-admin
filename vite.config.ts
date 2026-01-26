@@ -10,4 +10,8 @@ export default defineConfig({
   resolve: {
     alias: [{ find: "@", replacement: path.resolve(__dirname, "src") }],
   },
+  server: {
+    port: 5175,
+    host: true, // barcha hostlarga ruxsat
+  },
 });

@@ -249,36 +249,31 @@ const AddedPharmacies = ({ initialValues, setDialogOpen }: Props) => {
   });
 
   function onSubmit(values: z.infer<typeof PharmForm>) {
+    const baseBody = {
+      extra_location: {
+        latitude: Number(values.lat),
+        longitude: Number(values.long),
+      },
+      latitude: Number(values.lat),
+      longitude: Number(values.long),
+      name: values.name,
+      owner_phone: onlyNumber(values.phone_number),
+      ...(values.additional_phone && {
+        responsible_phone: onlyNumber(values.additional_phone),
+      }),
+      ...(values.inn && { inn: values.inn }), // 👈 faqat bo‘lsa yuboriladi
+    };
+
     if (initialValues) {
       edit({
         id: initialValues.id,
-        body: {
-          extra_location: {
-            latitude: Number(values.lat),
-            longitude: Number(values.long),
-          },
-          latitude: Number(values.lat),
-          longitude: Number(values.long),
-          inn: values.inn,
-          name: values.name,
-          owner_phone: onlyNumber(values.phone_number),
-          responsible_phone: onlyNumber(values.additional_phone),
-        },
+        body: baseBody,
       });
     } else {
       mutate({
+        ...baseBody,
         district_id: Number(values.district),
-        extra_location: {
-          latitude: Number(values.lat),
-          longitude: Number(values.long),
-        },
-        latitude: Number(values.lat),
-        longitude: Number(values.long),
-        inn: values.inn,
-        name: values.name,
-        owner_phone: onlyNumber(values.phone_number),
         place_id: Number(values.object),
-        responsible_phone: onlyNumber(values.additional_phone),
         user_id: Number(values.user),
       });
     }
@@ -343,7 +338,7 @@ const AddedPharmacies = ({ initialValues, setDialogOpen }: Props) => {
                 <Input
                   placeholder="+998 90 123-45-67"
                   {...field}
-                  value={formatPhone(field.value)}
+                  value={field.value && formatPhone(field.value)}
                 />
               </FormControl>
               <FormMessage />

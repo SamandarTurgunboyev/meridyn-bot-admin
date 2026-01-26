@@ -27,7 +27,6 @@ import {
   FormItem,
   FormMessage,
 } from "@/shared/ui/form";
-import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { Textarea } from "@/shared/ui/textarea";
@@ -49,7 +48,7 @@ const AddedPlan = ({ initialValues, setDialogOpen }: Props) => {
   const form = useForm<z.infer<typeof createPlanFormData>>({
     resolver: zodResolver(createPlanFormData),
     defaultValues: {
-      name: initialValues?.title || "",
+      // name: initialValues?.title || "",
       description: initialValues?.description || "",
       user: initialValues ? String(initialValues.user.id) : "",
       date: initialValues ? initialValues?.date : "",
@@ -180,7 +179,7 @@ const AddedPlan = ({ initialValues, setDialogOpen }: Props) => {
           },
           latitude: initialValues.latitude,
           longitude: initialValues.longitude,
-          title: data.name,
+          // title: data.name,
         },
         id: initialValues.id,
       });
@@ -194,7 +193,7 @@ const AddedPlan = ({ initialValues, setDialogOpen }: Props) => {
         },
         latitude: lat,
         longitude: long,
-        title: data.name,
+        // title: data.name,
         doctor_id: data.doctor_id ? Number(data.doctor_id) : null,
         pharmacy_id: data.pharmacy_id ? Number(data.pharmacy_id) : null,
         user_id: Number(data.user),
@@ -499,7 +498,7 @@ const AddedPlan = ({ initialValues, setDialogOpen }: Props) => {
             />
           )}
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
@@ -515,7 +514,7 @@ const AddedPlan = ({ initialValues, setDialogOpen }: Props) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           <FormField
             control={form.control}

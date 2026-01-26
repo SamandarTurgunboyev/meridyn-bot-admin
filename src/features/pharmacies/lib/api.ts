@@ -38,4 +38,11 @@ export const pharmacies_api = {
     const res = await httpClient.delete(`${API_URLS.PHARMACIES}${id}/delete/`);
     return res;
   },
+
+  async export() {
+    const res = await httpClient.get(`${API_URLS.PHARMACIES_EXPORT}`, {
+      responseType: "blob",
+    });
+    return res;
+  },
 };

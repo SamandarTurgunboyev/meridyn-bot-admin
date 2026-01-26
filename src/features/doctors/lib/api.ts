@@ -37,4 +37,11 @@ export const doctor_api = {
     const res = await httpClient.delete(`${API_URLS.DOCTOR}${id}/delete/`);
     return res;
   },
+
+  async export() {
+    const res = await httpClient.get(`${API_URLS.DOCTOR_EXPORT}`, {
+      responseType: "blob",
+    });
+    return res;
+  },
 };

@@ -1,3 +1,4 @@
+import { doctor_api } from "@/features/doctors/lib/api";
 import type { DoctorListResData } from "@/features/doctors/lib/data";
 import AddedDoctor from "@/features/doctors/ui/AddedDoctor";
 import { Button } from "@/shared/ui/button";
@@ -9,8 +10,11 @@ import {
   DialogTrigger,
 } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
-import { Plus } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import { CloudDownload, Loader2, Plus } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
+import { toast } from "sonner";
 
 interface Props {
   searchName: string;
@@ -49,6 +53,45 @@ const FilterDoctor = ({
   setEditingPlan,
   editingPlan,
 }: Props) => {
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      const res = await doctor_api.export();
+      return res.data;
+    },
+    onSuccess: (data: Blob) => {
+      // Blob URL yaratish
+      const url = window.URL.createObjectURL(
+        new Blob([data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        }),
+      );
+
+      // <a> elementi orqali yuklab olish
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "doctor_export.xlsx"); // Fayl nomi
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      // Blob URL-ni ozod qilish
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Excel muvaffaqiyatli yuklab olindi", {
+        position: "top-center",
+        richColors: true,
+      });
+    },
+    onError: (err: AxiosError) => {
+      const errMessage = err.response?.data as { message: string };
+      const messageText = errMessage.message;
+
+      toast.error(messageText || "Xatolik yuz berdi", {
+        richColors: true,
+        position: "top-center",
+      });
+    },
+  });
   return (
     <div className="flex justify-end gap-2 w-full">
       <Input
@@ -87,6 +130,17 @@ const FilterDoctor = ({
         onChange={(e) => setSearchUser(e.target.value)}
         className="w-full md:w-48"
       />
+
+      <Button
+        variant="default"
+        className="bg-blue-500 cursor-pointer hover:bg-blue-500"
+        onClick={() => mutate()}
+        disabled={isPending}
+      >
+        <CloudDownload className="!h-5 !w-5" /> Excel formatda yuklash
+        {isPending && <Loader2 className="animate-spin" />}
+      </Button>
+
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
           <Button

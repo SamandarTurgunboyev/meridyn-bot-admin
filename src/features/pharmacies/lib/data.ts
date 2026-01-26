@@ -123,9 +123,9 @@ export interface PharmaciesListData {
 
 export interface CreatePharmaciesReq {
   name: string;
-  inn: string;
+  inn?: string;
   owner_phone: string;
-  responsible_phone: string;
+  responsible_phone?: string;
   district_id: number;
   place_id: number;
   user_id: number;
@@ -136,9 +136,9 @@ export interface CreatePharmaciesReq {
 
 export interface UpdatePharmaciesReq {
   name: string;
-  inn: string;
+  inn?: string;
   owner_phone: string;
-  responsible_phone: string;
+  responsible_phone?: string;
   longitude: number;
   latitude: number;
   extra_location: { longitude: number; latitude: number };
