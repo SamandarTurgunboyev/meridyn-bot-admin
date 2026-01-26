@@ -157,7 +157,7 @@ const UserTable = ({
                     {user.last_name ? user.last_name : "No'malum"}
                   </TableCell>
                   <TableCell>
-                    {user.region ? user.region.name : "No'malum"}
+                    {user?.region ? user?.region?.name : "No'malum"}
                   </TableCell>
                   <TableCell className="text-center">
                     <Button
