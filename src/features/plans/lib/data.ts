@@ -51,7 +51,7 @@ export interface PlanListData {
 }
 
 export interface PlanCreateReq {
-  // title: string;
+  title?: string;
   description: string;
   date: string;
   user_id: number;
@@ -63,7 +63,7 @@ export interface PlanCreateReq {
 }
 
 export interface PlanUpdateReq {
-  // title: string;
+  title?: string;
   description: string;
   date: string;
   longitude: number;
