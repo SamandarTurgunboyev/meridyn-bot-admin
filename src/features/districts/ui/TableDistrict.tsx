@@ -1,5 +1,6 @@
 import type { DistrictListData } from "@/features/districts/lib/data";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import { Button } from "@/shared/ui/button";
 import {
   Table,
@@ -58,6 +59,7 @@ const TableDistrict = ({
               <TableHead>ID</TableHead>
               <TableHead>Tuman nomi</TableHead>
               <TableHead>Kim qo‘shgan</TableHead>
+              <TableHead>Qo'shgan sanasi</TableHead>
               <TableHead className="text-right">Harakatlar</TableHead>
             </TableRow>
           </TableHeader>
@@ -69,6 +71,9 @@ const TableDistrict = ({
                 <TableCell>{d.name}</TableCell>
                 <TableCell>
                   {d.user.first_name} {d.user.last_name}
+                </TableCell>
+                <TableCell>
+                  {formatDate.format(d.created_at, "DD-MM-YYYY")}
                 </TableCell>
                 <TableCell className="flex gap-2 justify-end">
                   <Button

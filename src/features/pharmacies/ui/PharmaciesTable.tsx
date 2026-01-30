@@ -1,5 +1,6 @@
 import type { PharmaciesListData } from "@/features/pharmacies/lib/data";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import formatPhone from "@/shared/lib/formatPhone";
 import { Button } from "@/shared/ui/button";
 import {
@@ -44,6 +45,7 @@ const PharmaciesTable = ({
             <TableHead>Tuman</TableHead>
             <TableHead>Obyekt</TableHead>
             <TableHead>Kim qo'shgan</TableHead>
+            <TableHead>Qo'shgan sanasi</TableHead>
             <TableHead className="text-right">Amallar</TableHead>
           </TableRow>
         </TableHeader>
@@ -59,6 +61,10 @@ const PharmaciesTable = ({
               <TableCell>{item.place.name}</TableCell>
               <TableCell>
                 {item.user.first_name} {item.user.last_name}
+              </TableCell>
+
+              <TableCell>
+                {formatDate.format(item.created_at, "DD-MM-YYYY")}
               </TableCell>
 
               <TableCell className="text-right flex gap-2 justify-end">

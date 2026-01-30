@@ -1,5 +1,6 @@
 import type { PlanListData } from "@/features/plans/lib/data";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import { Button } from "@/shared/ui/button";
 import {
   Table,
@@ -60,6 +61,8 @@ const PalanTable = ({
               <TableHead className="text-start">ID</TableHead>
               <TableHead className="text-start">Reja nomi</TableHead>
               <TableHead className="text-start">Tavsifi</TableHead>
+              <TableHead className="text-start">Qo'shilgan sanasi</TableHead>
+              <TableHead className="text-start">Bajarilish sanasi</TableHead>
               <TableHead className="text-start">Kimga tegishli</TableHead>
               <TableHead className="text-start">Shifokor biriktirgan</TableHead>
               <TableHead className="text-start">
@@ -75,6 +78,12 @@ const PalanTable = ({
                 <TableCell>{plan.id}</TableCell>
                 <TableCell>{plan.title}</TableCell>
                 <TableCell>{plan.description}</TableCell>
+                <TableCell>
+                  {formatDate.format(plan.created_at, "DD-MM-YYYY")}
+                </TableCell>
+                <TableCell>
+                  {formatDate.format(plan.date, "DD-MM-YYYY")}
+                </TableCell>
                 <TableCell>
                   {plan.user.first_name + " " + plan.user.last_name}
                 </TableCell>

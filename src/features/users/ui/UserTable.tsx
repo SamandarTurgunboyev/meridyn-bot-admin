@@ -1,6 +1,7 @@
 import { user_api } from "@/features/users/lib/api";
 import type { UserListData, UserListRes } from "@/features/users/lib/data";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import {
@@ -131,6 +132,7 @@ const UserTable = ({
               <TableHead className="text-start">Ismi</TableHead>
               <TableHead className="text-start">Familiyasi</TableHead>
               <TableHead className="text-start">Hududi</TableHead>
+              <TableHead className="text-start">Qo'shilgan sanasi</TableHead>
               <TableHead className="text-center">Holati</TableHead>
               <TableHead className="text-right">Harakatlar</TableHead>
             </TableRow>
@@ -158,6 +160,9 @@ const UserTable = ({
                   </TableCell>
                   <TableCell>
                     {user?.region ? user?.region?.name : "No'malum"}
+                  </TableCell>
+                  <TableCell>
+                    {formatDate.format(user?.created_at, "DD-MM-YYYY")}
                   </TableCell>
                   <TableCell className="text-center">
                     <Button

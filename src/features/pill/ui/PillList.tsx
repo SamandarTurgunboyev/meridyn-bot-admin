@@ -3,6 +3,7 @@ import { type PillListData, type PillType } from "@/features/pill/lib/data";
 import AddedPill from "@/features/pill/ui/AddedPill";
 import DeletePill from "@/features/pill/ui/DeletePill";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import formatPrice from "@/shared/lib/formatPrice";
 import { Button } from "@/shared/ui/button";
 import {
@@ -104,6 +105,7 @@ const PillList = () => {
               <TableHead className="text-start">ID</TableHead>
               <TableHead className="text-start">Nomi</TableHead>
               <TableHead className="text-start">Narxi</TableHead>
+              <TableHead className="text-start">Qo'shilgan sanasi</TableHead>
               <TableHead className="text-end">Amallar</TableHead>
             </TableRow>
           </TableHeader>
@@ -113,6 +115,9 @@ const PillList = () => {
                 <TableCell>{plan.id}</TableCell>
                 <TableCell>{plan.name}</TableCell>
                 <TableCell>{formatPrice(plan.price)}</TableCell>
+                <TableCell>
+                  {formatDate.format(plan.created_at, "Dd-MM-YYYY")}
+                </TableCell>
                 <TableCell className="flex gap-2 justify-end">
                   <Button
                     variant="outline"

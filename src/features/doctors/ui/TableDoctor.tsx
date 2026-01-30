@@ -1,5 +1,6 @@
 import type { DoctorListResData } from "@/features/doctors/lib/data";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import formatPhone from "@/shared/lib/formatPhone";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
@@ -68,6 +69,7 @@ const TableDoctor = ({
               <TableHead>Ish joyi</TableHead>
               <TableHead>Sohasi</TableHead>
               <TableHead>Kim qo'shgan</TableHead>
+              <TableHead>Qo'shgan sanasi</TableHead>
               <TableHead className="text-right">Amallar</TableHead>
             </TableRow>
           </TableHeader>
@@ -90,6 +92,9 @@ const TableDoctor = ({
                   <TableCell>{item.sphere}</TableCell>
                   <TableCell>
                     {item.user.first_name} {item.user.last_name}
+                  </TableCell>
+                  <TableCell>
+                    {formatDate.format(item.created_at, "DD-MM-YYYY")}
                   </TableCell>
                   <TableCell className="text-right flex gap-2 justify-end">
                     <Button

@@ -1,5 +1,6 @@
 import type { ObjectListData } from "@/features/objects/lib/data";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import {
@@ -60,6 +61,7 @@ const ObjectTable = ({
               <TableHead>Obyekt nomi</TableHead>
               <TableHead>Tuman</TableHead>
               <TableHead>Foydalanuvchi</TableHead>
+              <TableHead>Qo'shilgan sanasi</TableHead>
               <TableHead className="text-right">Amallar</TableHead>
             </TableRow>
           </TableHeader>
@@ -74,6 +76,9 @@ const ObjectTable = ({
                   </TableCell>
                   <TableCell>
                     {item.user.first_name} {item.user.last_name}
+                  </TableCell>
+                  <TableCell>
+                    {formatDate.format(item.created_at, "DD-MM-YYYY")}
                   </TableCell>
                   <TableCell className="text-right flex gap-2 justify-end">
                     <Button

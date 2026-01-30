@@ -6,6 +6,7 @@ import {
 import AddedPharm from "@/features/pharm/ui/AddedPharm";
 import DeletePharm from "@/features/pharm/ui/DeletePharm";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
@@ -121,6 +122,7 @@ const PharmList = () => {
               <TableRow className="text-center">
                 <TableHead className="text-start">ID</TableHead>
                 <TableHead className="text-start">Nomi</TableHead>
+                <TableHead className="text-start">Qo'shilgan sanasi</TableHead>
                 <TableHead className="text-end">Amallar</TableHead>
               </TableRow>
             </TableHeader>
@@ -130,6 +132,9 @@ const PharmList = () => {
                   <TableRow key={plan.id} className="text-start">
                     <TableCell>{plan.id}</TableCell>
                     <TableCell>{plan.name}</TableCell>
+                    <TableCell>
+                      {formatDate.format(plan.created_at, "DD-MM-YYYY")}
+                    </TableCell>
                     <TableCell className="flex gap-2 justify-end">
                       <Button
                         variant="outline"

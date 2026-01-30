@@ -1,5 +1,6 @@
 import type { RegionListResData } from "@/features/region/lib/data";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import { Button } from "@/shared/ui/button";
 import {
   Table,
@@ -51,6 +52,7 @@ const RegionTable = ({
             <TableRow className="text-center">
               <TableHead className="text-start">ID</TableHead>
               <TableHead className="text-start">Nomi</TableHead>
+              <TableHead className="text-start">Qo'shilgan sanasi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -58,6 +60,9 @@ const RegionTable = ({
               <TableRow key={plan.id} className="text-start">
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{plan.name}</TableCell>
+                <TableCell>
+                  {formatDate.format(plan.created_at, "DD-MM-YYYY")}
+                </TableCell>
                 <TableCell className="flex gap-2 justify-end">
                   <Button
                     variant="outline"
