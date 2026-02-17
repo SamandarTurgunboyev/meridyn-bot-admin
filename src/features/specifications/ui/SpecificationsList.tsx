@@ -6,6 +6,7 @@ import { AddedSpecification } from "@/features/specifications/ui/AddedSpecificat
 import DeleteOrder from "@/features/specifications/ui/DeleteOrder";
 import { SpecificationDetail } from "@/features/specifications/ui/SpecificationDetail ";
 import { userStore } from "@/shared/hooks/user";
+import formatDate from "@/shared/lib/formatDate";
 import formatPrice from "@/shared/lib/formatPrice";
 import { Button } from "@/shared/ui/button";
 import {
@@ -118,6 +119,7 @@ const SpecificationsList = () => {
                 <TableHead>Jami</TableHead>
                 <TableHead>% To‘langan</TableHead>
                 <TableHead>To‘langan summa</TableHead>
+                <TableHead>Qo'shilgan sanasi</TableHead>
                 <TableHead className="text-right">Amallar</TableHead>
               </TableRow>
             </TableHeader>
@@ -133,6 +135,9 @@ const SpecificationsList = () => {
                   <TableCell>{formatPrice(item.total_price)}</TableCell>
                   <TableCell>{item.advance}%</TableCell>
                   <TableCell>{formatPrice(item.paid_price)}</TableCell>
+                  <TableCell>
+                    {formatDate.format(item.created_at, "DD-MM-YYYY")}
+                  </TableCell>
                   <TableCell className="text-right flex gap-2 justify-end">
                     <Button
                       size="icon"
